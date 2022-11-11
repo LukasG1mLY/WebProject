@@ -11,7 +11,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class DatabaseUtils extends SQLUtils {
 
@@ -60,46 +59,6 @@ public class DatabaseUtils extends SQLUtils {
             return "";
         }
     }
-    public String doesIdExits_GetContent_Ldap(int id) {
-        ResultSet rs;
-
-        try {
-            rs = onQuery("SELECT GRP_NAME FROM LDAP_GRP WHERE ID =?", id);
-            rs.next();
-               return rs.getString("GRP_NAME");
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println("Failed onQuery by DoesIDExits");
-        }
-        return null;
-    }
-    public String doesIdExits_GetContent_Link(int id, String Id, String Linktext, String Link_group_ID, String Sort, String Description, String Url_Active, String Url_inActive, String Active, String Auth_Level, String NewTab) {
-        ResultSet rs;
-        List<Link> list = new ArrayList<>();
-        try {
-            rs = onQuery("SELECT ID,LINKTEXT,LINK_GRP_ID,SORT,DESCRIPTION,URL_ACTIVE,URL_INACTIVE,ACTIVE,AUTH_LEVEL,NEWTAB FROM LINK WHERE ID =?", id);
-            while (rs.next()) {
-                list.add(new Link(
-                        rs.getString(Id),
-                        rs.getString(Linktext),
-                        rs.getString(Link_group_ID),
-                        rs.getString(Sort),
-                        rs.getString(Description),
-                        rs.getString(Url_Active),
-                        rs.getString(Url_inActive),
-                        rs.getString(Active),
-                        rs.getString(Auth_Level),
-                        rs.getString(NewTab)));
-            }
-
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println("Failed onQuery by DoesIDExits");
-        }
-        return null;
-    }
     public void editInfoStaff(String text) {
         try {
             onExecute("UPDATE INFOBOX SET INFO = ? WHERE ROLLE = 'staff'", text);
@@ -119,32 +78,6 @@ public class DatabaseUtils extends SQLUtils {
             System.out.println("Failed onExecute");
         }
     }
-
-
-    public void deleteInfoLink(Set<Ldap> id)  {
-        try {
-            onExecute("DELETE FROM LINK WHERE ID =?", id);
-            System.out.println("Deleted ROW_" + (id));
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println("Failed to delete ROW_ " + (id));
-        }
-
-
-    }
-
-
-    public void editInfoLDAP(int id, String text) {
-        try {
-            onExecute("UPDATE LDAP_GRP SET GRP_NAME =? WHERE ID =?", text, id);
-            System.out.println("Changed Info LDAP_ID_" + id );
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println("Failed onExecute by LDAP_ID_" + id);
-        }
-
-    }
     public void deleteInfoLDAP(int id)  {
         try {
             onExecute("DELETE FROM LDAP_GRP WHERE ID =?", id);
@@ -156,6 +89,48 @@ public class DatabaseUtils extends SQLUtils {
         }
 
 
+    }
+    public void deleteInfoLink(int id)  {
+        try {
+            onExecute("DELETE FROM LINK WHERE ID =?", id);
+            System.out.println("Deleted ROW_" + (id));
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("Failed to delete ROW_ " + (id));
+        }
+
+
+    }
+    public void addNewIdAndName_Link(String Linktext, String Link_group_ID, String Sort, String Description, String Url_Active, String Url_inActive, String Active, String Auth_Level, String NewTab) {
+        try
+        {
+            ResultSet rs = onQuery("SELECT MAX(ID) FROM LINK ORDER BY ID");
+            rs.next();
+            int newId = rs.getInt("MAX(ID)") + 1;
+            onExecute("INSERT INTO LINK VALUES(?,?,?,?,?,?,?,?,?,?)", newId, Linktext, Link_group_ID, Sort, Description, Url_Active, Url_inActive, Active, Auth_Level, NewTab);
+            System.out.println("Die ID: " + newId + " wurde zum verzeichnis Hinzugefügt.");
+
+
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public void addNewIdAndName_Ldap(String name) {
+        try
+        {
+            ResultSet rs = onQuery("SELECT MAX(ID) FROM LDAP_GRP ORDER BY ID");
+            rs.next();
+            int newId = rs.getInt("MAX(ID)") + 1;
+            onExecute("INSERT INTO LDAP_GRP VALUES(?,?)", newId, name);
+            System.out.println("Die ID: " + newId + " wurde zum verzeichnis Hinzugefügt.");
+
+
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     public List<InfoBox> getInfo_InfoBox() {
         ResultSet rs;
@@ -189,7 +164,7 @@ public class DatabaseUtils extends SQLUtils {
         ResultSet rs;
         List<Link> list = new ArrayList<>();
         try {
-            rs = onQuery("SELECT ID,LINKTEXT,LINK_GRP_ID,SORT,DESCRIPTION,URL_ACTIVE,URL_INACTIVE,ACTIVE,AUTH_LEVEL,NEWTAB FROM LINK ORDER BY ID");
+            rs = onQuery("SELECT * FROM LINK ORDER BY ID");
             while (rs.next()) {
                 list.add(new Link(
                         rs.getString("ID"),
@@ -208,42 +183,5 @@ public class DatabaseUtils extends SQLUtils {
             e.printStackTrace();
         }
         return list;
-    }
-    public void addNewIdAndName(String name) {
-        try
-        {
-            ResultSet rs = onQuery("SELECT MAX(ID) FROM LDAP_GRP ORDER BY ID");
-            rs.next();
-            int newId = rs.getInt("MAX(ID)") + 1;
-            onExecute("INSERT INTO LDAP_GRP VALUES(?,?)", newId, name);
-            System.out.println("Die ID: " + newId + " wurde zum verzeichnis Hinzugefügt.");
-
-
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public String doesIdExits_GetContent_Link(String placeholder, String id) {
-
-        return placeholder;
-    }
-
-    public Object doesIdExits_GetContent_Link(int parseInt) {
-        return parseInt;
-    }
-
-    public void deleteInfoLink(String toString) {
-        try {
-            onExecute("DELETE FROM LINK WHERE ID =?", toString);
-            System.out.println("Deleted ROW_" + (toString));
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println("Failed to delete ROW_ " + (toString));
-        }
-
-
     }
 }

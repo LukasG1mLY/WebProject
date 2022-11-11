@@ -36,7 +36,7 @@ public class Link {
         Newtab = pNewtab;
     }
 
-    public String getId() {return Id;}
+    public int getId() {return Integer.parseInt(Id);}
 
     public String getLinktext() {return Linktext;}
     public String getLink_grp_id() {return Link_grp_id;}
