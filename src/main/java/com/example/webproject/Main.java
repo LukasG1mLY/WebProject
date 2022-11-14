@@ -28,7 +28,6 @@ import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
-
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.List;
@@ -56,7 +55,6 @@ public class Main extends Div {
             setContent(e.getSelectedTab());
             setContent(tabs.getSelectedTab());
         });
-
         add(tabs, layout_content, layout_grid, layout_dialog);
     }
     private void setContent(@NotNull Tab tab) {
@@ -75,51 +73,34 @@ public class Main extends Div {
         if (tab.equals(edit)) {
 
             List<InfoBox> InfoBox = databaseUtils.getInfo_InfoBox();
+            List<Link> Link = databaseUtils.getInfo_Link();
+            List<Ldap> Ldap = databaseUtils.getInfo_Ldap();
 
             Grid<InfoBox> InfoBox_grid = new Grid<>();
-            InfoBox_grid.addColumn(com.example.webproject.Listen.InfoBox::getRolle).setHeader("Rolle");
-            InfoBox_grid.addColumn(com.example.webproject.Listen.InfoBox::getInfo).setHeader("Info");
-            InfoBox_grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS);
-            InfoBox_grid.setSelectionMode(Grid.SelectionMode.SINGLE);
-            InfoBox_grid.setItems(InfoBox);
-            InfoBox_grid.setVisible(false);
-
-            List<Link> Link = databaseUtils.getInfo_Link();
             Grid<Link> Link_grid = new Grid<>();
-            Link_grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS);
-            Link_grid.setSelectionMode(Grid.SelectionMode.SINGLE);
-            Link_grid.addColumn(com.example.webproject.Listen.Link::getId).setHeader("ID").setFlexGrow(0).setSortable(true);
-            Link_grid.addColumn(com.example.webproject.Listen.Link::getLinktext).setHeader("Linktext");
-            Link_grid.addColumn(com.example.webproject.Listen.Link::getLink_grp_id).setHeader("Link GRP ID");
-            Link_grid.addColumn(com.example.webproject.Listen.Link::getSort).setHeader("Sort");
-            Link_grid.addColumn(com.example.webproject.Listen.Link::getDescription).setHeader("Description");
-            Link_grid.addColumn(com.example.webproject.Listen.Link::getUrl_active).setHeader("Url Active");
-            Link_grid.addColumn(com.example.webproject.Listen.Link::getUrl_inactive).setHeader("Url InActive");
-            Link_grid.addColumn(com.example.webproject.Listen.Link::getActive).setHeader("Active");
-            Link_grid.addColumn(com.example.webproject.Listen.Link::getAuth_level).setHeader("Auth Level");
-            Link_grid.addColumn(com.example.webproject.Listen.Link::getNewtab).setHeader("New Tab");
-            Link_grid.setItems(Link);
-            Link_grid.setVisible(false);
-
-            List<Ldap> Ldap = databaseUtils.getInfo_Ldap();
             Grid<Ldap> Ldap_grid = new Grid<>();
-            Ldap_grid.addColumn(com.example.webproject.Listen.Ldap::getId).setHeader("ID").setFlexGrow(0);
-            Ldap_grid.addColumn(com.example.webproject.Listen.Ldap::getContent).setHeader("Content").setAutoWidth(true);
-            Ldap_grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS);
-            Ldap_grid.setSelectionMode(Grid.SelectionMode.SINGLE);
-            Ldap_grid.setItems(Ldap);
+
+            InfoBox_grid.setVisible(false);
+            Link_grid.setVisible(false);
             Ldap_grid.setVisible(false);
 
             MenuBar menuBar = new MenuBar();
             menuBar.setVisible(true);
+            menuBar.addThemeVariants(MenuBarVariant.LUMO_LARGE, MenuBarVariant.LUMO_CONTRAST);
 
             MenuItem Infobox_item = menuBar.addItem("Infotext");
             MenuItem Ldap_item = menuBar.addItem("Ldap");
             MenuItem Link_item = menuBar.addItem("Link");
 
-            menuBar.addThemeVariants(MenuBarVariant.LUMO_LARGE);
-
             Infobox_item.addClickListener(e -> {
+
+                InfoBox_grid.addColumn(com.example.webproject.Listen.InfoBox::getRolle).setHeader("Rolle");
+                InfoBox_grid.addColumn(com.example.webproject.Listen.InfoBox::getInfo).setHeader("Info");
+                InfoBox_grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS);
+                InfoBox_grid.setSelectionMode(Grid.SelectionMode.SINGLE);
+                InfoBox_grid.setItems(InfoBox);
+
+
                 Button b1 = new Button("Abbrechen");
                 b1.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
                 b1.getStyle().set("margin-left", "auto");
@@ -154,6 +135,13 @@ public class Main extends Div {
                 });
             });
             Ldap_item.addClickListener(e -> {
+
+                Ldap_grid.addColumn(com.example.webproject.Listen.Ldap::getId).setHeader("ID").setFlexGrow(0);
+                Ldap_grid.addColumn(com.example.webproject.Listen.Ldap::getContent).setHeader("Content").setAutoWidth(true);
+                Ldap_grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS);
+                Ldap_grid.setSelectionMode(Grid.SelectionMode.SINGLE);
+                Ldap_grid.setItems(Ldap);
+
 
                 Dialog d1 = new Dialog();
 
@@ -264,10 +252,23 @@ public class Main extends Div {
                 d1.add(heading, tools, Ldap_grid);
             });
             Link_item.addClickListener(e -> {
+
+                Link_grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_WRAP_CELL_CONTENT, GridVariant.LUMO_ROW_STRIPES);
+                Link_grid.setAllRowsVisible(false);
+                Link_grid.addColumn(com.example.webproject.Listen.Link::getId).setHeader("ID").setFlexGrow(0).setSortable(true);
+                Link_grid.addColumn(com.example.webproject.Listen.Link::getLinktext).setHeader("Linktext");
+                Link_grid.addColumn(com.example.webproject.Listen.Link::getLink_grp_id).setHeader("Link GRP ID");
+                Link_grid.addColumn(com.example.webproject.Listen.Link::getSort).setHeader("Sort");
+                Link_grid.addColumn(com.example.webproject.Listen.Link::getDescription).setHeader("Description");
+                Link_grid.addColumn(com.example.webproject.Listen.Link::getUrl_active).setHeader("Url Active");
+                Link_grid.addColumn(com.example.webproject.Listen.Link::getUrl_inactive).setHeader("Url InActive");
+                Link_grid.addColumn(com.example.webproject.Listen.Link::getActive).setHeader("Active");
+                Link_grid.addColumn(com.example.webproject.Listen.Link::getAuth_level).setHeader("Auth Level");
+                Link_grid.addColumn(com.example.webproject.Listen.Link::getNewtab).setHeader("New Tab");
+                Link_grid.setItems(Link);
+
                 Dialog d1 = new Dialog();
-
                 Dialog d2 = new Dialog();
-
                 Dialog d3 = new Dialog();
                 d3.setWidth(60, Unit.PERCENTAGE);
 
@@ -276,31 +277,23 @@ public class Main extends Div {
 
                 H2 H2 = new H2("Verzeichnis-Liste: Link");
                 H2.getStyle().set("margin", "0 auto 0 0");
-
                 H2 H3 = new H2("");
                 H2.getStyle().set("margin", "0 auto 0 0");
 
                 Button saveButton = new Button("Speichern");
                 saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SUCCESS);
-
+                Button downloadButton = new Button("Verzeichnis Herunterladen");
+                downloadButton.addThemeVariants(ButtonVariant.LUMO_ICON);
                 Button cancelButton = new Button("Nein, Abbrechen");
                 cancelButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
-
-                Button createButton = new Button(VaadinIcon.PLUS.create());
-                createButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY, ButtonVariant.LUMO_SUCCESS);
-
+                Button createButton = new Button("Hinzufügen");
+                createButton.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_SUCCESS);
                 Button closeButton = new Button(VaadinIcon.CLOSE.create());
                 closeButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY, ButtonVariant.LUMO_ERROR);
-
-                Button editButton = new Button(VaadinIcon.EDIT.create());
-                editButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
-                editButton.setEnabled(false);
-
-                Button deleteButton = new Button(VaadinIcon.TRASH.create());
-                deleteButton.setEnabled(false);
-                deleteButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY, ButtonVariant.LUMO_ERROR);
-                deleteButton.getStyle().set("margin", "0 auto 0 0 0 0");
-
+                Button maximizeButton = new Button(VaadinIcon.VIEWPORT.create());
+                maximizeButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+                Button minimizeButton = new Button(VaadinIcon.RESIZE_H.create());
+                minimizeButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
                 Button approveButton = new Button("Löschen");
                 approveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
 
@@ -328,22 +321,83 @@ public class Main extends Div {
                 dialogLayout.setSpacing(false);
                 dialogLayout.setSizeFull();
 
-                HorizontalLayout heading = new HorizontalLayout(H2, closeButton);
+                HorizontalLayout heading = new HorizontalLayout(H2, minimizeButton, maximizeButton, closeButton);
+                heading.setAlignItems(FlexComponent.Alignment.CENTER);
+                HorizontalLayout tools = new HorizontalLayout(H3, createButton, downloadButton);
                 heading.setAlignItems(FlexComponent.Alignment.CENTER);
 
-                HorizontalLayout tools = new HorizontalLayout(H3, createButton, editButton, deleteButton);
-                heading.setAlignItems(FlexComponent.Alignment.CENTER);
                 d1.open();
                 d1.setCloseOnOutsideClick(false);
                 d1.setWidthFull();
 
                 Link_grid.setVisible(d1.isOpened());
-                Link_grid.addSelectionListener(selection -> {
-                    int size = selection.getAllSelectedItems().size();
-                    boolean isSingleSelection = size == 1;
-                    editButton.setEnabled(isSingleSelection);
-                    deleteButton.setEnabled(size != 0);
+                Link_grid.addComponentColumn(Tools -> {
+                    Button deleteButton = new Button(VaadinIcon.TRASH.create());
+                    Button editButton = new Button(VaadinIcon.EDIT.create());
+                    editButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+                    deleteButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY, ButtonVariant.LUMO_ERROR);
+
+                    deleteButton.addClickListener(Click -> {
+                        final int i;
+                        i = Integer.parseInt(Tools.getId());
+                        d2.open();
+                        d2.setHeaderTitle("Verzeichnis " + i);
+                        d2.setCloseOnOutsideClick(false);
+                        d2.getFooter().add(approveButton, cancelButton);
+                        approveButton.addClickListener(click -> {
+                            databaseUtils.deleteInfoLink(Integer.parseInt(Tools.getId()));
+                            UI.getCurrent().getPage().reload();
+                        });
+                    });
+                    editButton.addClickListener(Click -> {
+                        saveButton.addClickListener(click -> {
+
+                            if (Linktext.isEmpty()) {
+                                Linktext.setValue("N/A");
+                            }
+                            if (Link_Group_ID.isEmpty()) {
+                                Link_Group_ID.setValue("1");
+                            }
+                            if (Sort.isEmpty()) {
+                                Sort.setValue("1");
+                            }
+                            if (Description.isEmpty()) {
+                                Description.setValue("N/A");
+                            }
+                            if (URL_ACTIVE.isEmpty()) {
+                                URL_ACTIVE.setValue("N/A");
+                            }
+                            if (URL_INACTIVE.isEmpty()) {
+                                URL_INACTIVE.setValue("1");
+                            }
+                            if (Active.isEmpty()) {
+                                Active.setValue("1");
+                            }
+                            if (Auth_Level.isEmpty()) {
+                                Auth_Level.setValue("1");
+                            }
+                            if (NewTab.isEmpty()) {
+                                NewTab.setValue("1");
+                            }
+                        });
+
+                        Linktext.setValue(Tools.getLinktext());
+                        Link_Group_ID.setValue(Tools.getLink_grp_id());
+                        Sort.setValue(Tools.getSort());
+                        Description.setValue(Tools.getDescription());
+                        URL_ACTIVE.setValue(Tools.getUrl_active());
+                        URL_INACTIVE.setValue(Tools.getUrl_inactive());
+                        Active.setValue(Tools.getActive());
+                        Auth_Level.setValue(Tools.getAuth_level());
+                        NewTab.setValue(Tools.getNewtab());
+
+                        d3.open();
+                        d3.add(dialogLayout);
+                        d3.getFooter().add(saveButton);
+                    });
+                    return new HorizontalLayout(editButton, deleteButton);
                 });
+
                 saveButton.addClickListener(Click -> {
                     if (Linktext.isEmpty()) {
                         Linktext.setValue("N/A");
@@ -376,45 +430,32 @@ public class Main extends Div {
                     databaseUtils.addNewIdAndName_Link(Linktext.getValue(), Link_Group_ID.getValue(), Sort.getValue(), Description.getValue(), URL_ACTIVE.getValue(), URL_INACTIVE.getValue(), Active.getValue(), Auth_Level.getValue(), NewTab.getValue());
                     UI.getCurrent().getPage().reload();
                 });
-
-                cancelButton.addClickListener(Click -> d3.close());
-                closeButton.addClickListener(Click -> d1.close());
-                editButton.addClickListener(Click -> d2.open());
-                deleteButton.addClickListener(Click -> {
-                    d2.open();
-                    d2.add(info);
-                    d2.getFooter().add(approveButton, cancelButton);
-                    Link_grid.addItemClickListener(click -> {
-                        d2.setHeaderTitle("Verzeichnis " + click.getItem().getId());
-                    });
+                cancelButton.addClickListener(Click -> {
+                    d3.close();
+                    d2.close();
                 });
                 createButton.addClickListener(Click -> {
                     d3.open();
                     d3.add(dialogLayout);
+                    d3.setCloseOnOutsideClick(false);
                     d3.getFooter().add(saveButton, cancelButton);
                 });
-                Link_grid.addItemClickListener(Click -> {
-                    Link_grid.setRowsDraggable(true);
-                    final int l = Click.getItem().getId();
-                    approveButton.addClickListener(click -> {
-                        databaseUtils.deleteInfoLink(l);
-                        UI.getCurrent().getPage().reload();
-
-                    });
+                closeButton.addClickListener(Click -> {
+                    d1.close();
+                    Link_grid.removeAllColumns();
                 });
+                maximizeButton.addClickListener(Click -> Link_grid.setAllRowsVisible(true));
+                minimizeButton.addClickListener(Click -> Link_grid.setAllRowsVisible(false));
                 d1.add(heading, tools, Link_grid);
             });
-            Link_grid.addItemClickListener(Click -> {
-                int i = Integer.parseInt(String.valueOf(Click.getItem().getId()));
-                System.out.println(i);
-            });
-                layout_grid.setMaxWidth(100, Unit.PERCENTAGE);
-                layout_content.setAlignItems(FlexComponent.Alignment.CENTER);
-                layout_content.add(menuBar);
-                layout_grid.add(InfoBox_grid, Link_grid, Ldap_grid);
+
+            layout_grid.setMaxWidth(100, Unit.PERCENTAGE);
+            layout_content.setAlignItems(FlexComponent.Alignment.CENTER);
+            layout_content.add(menuBar);
+            layout_grid.add(InfoBox_grid, Link_grid, Ldap_grid);
         }
         if (tab.equals(home)) {
-                System.out.println("Home wurde Gedrückt");
-            }
+            System.out.println("Home wurde Gedrückt");
+        }
     }
 }

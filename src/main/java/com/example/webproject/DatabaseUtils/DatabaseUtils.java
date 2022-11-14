@@ -29,6 +29,7 @@ public class DatabaseUtils extends SQLUtils {
             throw new RuntimeException(e);
         }
     }
+
     public String getInfoStaff() {
 
         ResultSet rs;
@@ -44,6 +45,7 @@ public class DatabaseUtils extends SQLUtils {
             return "";
         }
     }
+
     public String getInfoStudent() {
 
         ResultSet rs;
@@ -59,6 +61,7 @@ public class DatabaseUtils extends SQLUtils {
             return "";
         }
     }
+
     public void editInfoStaff(String text) {
         try {
             onExecute("UPDATE INFOBOX SET INFO = ? WHERE ROLLE = 'staff'", text);
@@ -69,6 +72,7 @@ public class DatabaseUtils extends SQLUtils {
 
         }
     }
+
     public void editInfoStudent(String text) {
         try {
             onExecute("UPDATE INFOBOX SET INFO = ? WHERE ROLLE = 'student'", text);
@@ -78,7 +82,8 @@ public class DatabaseUtils extends SQLUtils {
             System.out.println("Failed onExecute");
         }
     }
-    public void deleteInfoLDAP(int id)  {
+
+    public void deleteInfoLDAP(int id) {
         try {
             onExecute("DELETE FROM LDAP_GRP WHERE ID =?", id);
             System.out.println("Deleted ROW_ " + (id));
@@ -90,7 +95,8 @@ public class DatabaseUtils extends SQLUtils {
 
 
     }
-    public void deleteInfoLink(int id)  {
+
+    public void deleteInfoLink(int id) {
         try {
             onExecute("DELETE FROM LINK WHERE ID =?", id);
             System.out.println("Deleted ROW_" + (id));
@@ -102,9 +108,9 @@ public class DatabaseUtils extends SQLUtils {
 
 
     }
+
     public void addNewIdAndName_Link(String Linktext, String Link_group_ID, String Sort, String Description, String Url_Active, String Url_inActive, String Active, String Auth_Level, String NewTab) {
-        try
-        {
+        try {
             ResultSet rs = onQuery("SELECT MAX(ID) FROM LINK ORDER BY ID");
             rs.next();
             int newId = rs.getInt("MAX(ID)") + 1;
@@ -112,14 +118,13 @@ public class DatabaseUtils extends SQLUtils {
             System.out.println("Die ID: " + newId + " wurde zum verzeichnis Hinzugefügt.");
 
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
     public void addNewIdAndName_Ldap(String name) {
-        try
-        {
+        try {
             ResultSet rs = onQuery("SELECT MAX(ID) FROM LDAP_GRP ORDER BY ID");
             rs.next();
             int newId = rs.getInt("MAX(ID)") + 1;
@@ -127,11 +132,11 @@ public class DatabaseUtils extends SQLUtils {
             System.out.println("Die ID: " + newId + " wurde zum verzeichnis Hinzugefügt.");
 
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
     public List<InfoBox> getInfo_InfoBox() {
         ResultSet rs;
         List<InfoBox> list = new ArrayList<>();
@@ -146,6 +151,7 @@ public class DatabaseUtils extends SQLUtils {
         }
         return list;
     }
+
     public List<Ldap> getInfo_Ldap() {
         ResultSet rs;
         List<Ldap> list = new ArrayList<>();
@@ -154,12 +160,12 @@ public class DatabaseUtils extends SQLUtils {
             while (rs.next()) {
                 list.add(new Ldap(rs.getString("ID"), rs.getString("GRP_NAME")));
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return list;
     }
+
     public List<Link> getInfo_Link() {
         ResultSet rs;
         List<Link> list = new ArrayList<>();
@@ -178,8 +184,7 @@ public class DatabaseUtils extends SQLUtils {
                         rs.getString("AUTH_LEVEL"),
                         rs.getString("NEWTAB")));
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return list;
