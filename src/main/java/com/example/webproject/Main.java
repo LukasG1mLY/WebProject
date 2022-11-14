@@ -334,6 +334,7 @@ public class Main extends Div {
                 Link_grid.addComponentColumn(Tools -> {
                     Button deleteButton = new Button(VaadinIcon.TRASH.create());
                     Button editButton = new Button(VaadinIcon.EDIT.create());
+                    Button safeButton = new Button("Speichern");
                     editButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
                     deleteButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY, ButtonVariant.LUMO_ERROR);
 
@@ -350,36 +351,6 @@ public class Main extends Div {
                         });
                     });
                     editButton.addClickListener(Click -> {
-                        saveButton.addClickListener(click -> {
-
-                            if (Linktext.isEmpty()) {
-                                Linktext.setValue("N/A");
-                            }
-                            if (Link_Group_ID.isEmpty()) {
-                                Link_Group_ID.setValue("1");
-                            }
-                            if (Sort.isEmpty()) {
-                                Sort.setValue("1");
-                            }
-                            if (Description.isEmpty()) {
-                                Description.setValue("N/A");
-                            }
-                            if (URL_ACTIVE.isEmpty()) {
-                                URL_ACTIVE.setValue("N/A");
-                            }
-                            if (URL_INACTIVE.isEmpty()) {
-                                URL_INACTIVE.setValue("1");
-                            }
-                            if (Active.isEmpty()) {
-                                Active.setValue("1");
-                            }
-                            if (Auth_Level.isEmpty()) {
-                                Auth_Level.setValue("1");
-                            }
-                            if (NewTab.isEmpty()) {
-                                NewTab.setValue("1");
-                            }
-                        });
 
                         Linktext.setValue(Tools.getLinktext());
                         Link_Group_ID.setValue(Tools.getLink_grp_id());
@@ -393,7 +364,7 @@ public class Main extends Div {
 
                         d3.open();
                         d3.add(dialogLayout);
-                        d3.getFooter().add(saveButton);
+                        d3.getFooter().add(safeButton);
                     });
                     return new HorizontalLayout(editButton, deleteButton);
                 });
