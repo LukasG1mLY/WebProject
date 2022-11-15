@@ -1,6 +1,7 @@
 package com.example.webproject.DatabaseUtils;
 
 import com.example.webproject.Listen.InfoBox;
+import com.example.webproject.Listen.LDAP_ROLE;
 import com.example.webproject.Listen.Ldap;
 import com.example.webproject.Listen.Link;
 import org.ini4j.Wini;
@@ -78,6 +79,24 @@ public class DatabaseUtils extends SQLUtils {
             System.out.println("Failed onExecute");
         }
     }
+    public void editInfoLDAP(int id, String text) {
+        try {
+            onExecute("UPDATE LDAP_GRP SET GRP_NAME =? WHERE ID =?", text, id + 1);
+            System.out.println("Changed Info LDAP_ID_" + (id + 1));
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("Failed onExecute by LDAP_ID_" + id);
+        }
+    }
+    public void editInfoLDAP_ROLE(int ID, String Content) {
+        try {
+            onExecute("UPDATE LDAP_ROLE SET ROLE_NAME =? WHERE ID =?",Content, ID);
+            System.out.println("Changed Info LDAP_ROLE " + ID);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("Failed onExecute by LDAP_ROLE " + ID);
+        }
+    }
     public void deleteInfoLDAP(int id)  {
         try {
             onExecute("DELETE FROM LDAP_GRP WHERE ID =?", id);
@@ -102,6 +121,16 @@ public class DatabaseUtils extends SQLUtils {
 
 
     }
+    public void deleteInfoLDAP_ROLE(int ID) {
+        try {
+            onExecute("DELETE FROM LDAP_ROLE WHERE ID =?", ID);
+            System.out.println("Deleted ROW_" + (ID));
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("Failed to delete ROW_ " + (ID));
+        }
+    }
     public void addNewIdAndName_Link(String Linktext, String Link_group_ID, String Sort, String Description, String Url_Active, String Url_inActive, String Active, String Auth_Level, String NewTab) {
         try
         {
@@ -124,6 +153,21 @@ public class DatabaseUtils extends SQLUtils {
             rs.next();
             int newId = rs.getInt("MAX(ID)") + 1;
             onExecute("INSERT INTO LDAP_GRP VALUES(?,?)", newId, name);
+            System.out.println("Die ID: " + newId + " wurde zum verzeichnis Hinzugefügt.");
+
+
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public void addNewIdAndName_ROLE(String Content) {
+        try
+        {
+            ResultSet rs = onQuery("SELECT MAX(ID) FROM LDAP_ROLE ORDER BY ID");
+            rs.next();
+            int newId = rs.getInt("MAX(ID)") + 1;
+            onExecute("INSERT INTO LDAP_ROLE VALUES(?,?)", newId, Content);
             System.out.println("Die ID: " + newId + " wurde zum verzeichnis Hinzugefügt.");
 
 
@@ -184,12 +228,25 @@ public class DatabaseUtils extends SQLUtils {
         }
         return list;
     }
+    public List<LDAP_ROLE> getAllInfos_LDAP_ROLE() {
+        ResultSet rs;
+        List<LDAP_ROLE> list = new ArrayList<>();
+        try {
+            rs = onQuery("SELECT ID,ROLE_NAME FROM LDAP_ROLE ORDER BY ID");
+            while (rs.next()) {
+                list.add(new LDAP_ROLE(rs.getString("ID"), rs.getString("ROLE_NAME")));
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
     public void editInfoLink(int Id, String Linktext, String Link_group_ID, String Sort, String Description, String Url_Active, String Url_inActive, String Active, String Auth_Level, String NewTab) {
 
-
         try {
-            onExecute("UPDATE LINK SET LINKTEXT =?,LINK_GRP_ID =?,SORT =?,DESCRIPTION =?,URL_ACTIVE =?,URL_INACTIVE =?,ACTIVE =?,AUTH_LEVEL =?,NEWTAB =? WHERE ID =?",Linktext, Link_group_ID, Sort, Description, Url_Active, Url_inActive, Active, Auth_Level, NewTab, Id + 2);
-            System.out.println("Changed Info LINK_" + (Id + 2));
+            onExecute("UPDATE LINK SET LINKTEXT =?,LINK_GRP_ID =?,SORT =?,DESCRIPTION =?,URL_ACTIVE =?,URL_INACTIVE =?,ACTIVE =?,AUTH_LEVEL =?,NEWTAB =? WHERE ID =?",Linktext, Link_group_ID, Sort, Description, Url_Active, Url_inActive, Active, Auth_Level, NewTab, Id);
+            System.out.println("Changed Info LINK_" + (Id));
         } catch (SQLException e) {
             e.printStackTrace();
             System.out.println("Failed onExecute by LINK_" + Id);
