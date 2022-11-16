@@ -4,7 +4,7 @@ public class InfoBox {
 
     String rolle, info;
 
-    public InfoBox( String pRolle, String pInfo) {
+    public InfoBox(String pRolle, String pInfo) {
         rolle = pRolle;
         info = pInfo;
     }

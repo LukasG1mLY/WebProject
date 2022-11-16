@@ -1,11 +1,7 @@
 package com.example.webproject;
 
 import com.example.webproject.DatabaseUtils.DatabaseUtils;
-import com.example.webproject.Listen.InfoBox;
-import com.example.webproject.Listen.LDAP_ROLE;
-import com.example.webproject.Listen.Ldap;
-import com.example.webproject.Listen.Link;
-import com.vaadin.flow.component.Component;
+import com.example.webproject.Listen.*;
 import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -18,26 +14,34 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.menubar.MenuBar;
 import com.vaadin.flow.component.menubar.MenuBarVariant;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
+import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.renderer.IconRenderer;
+import com.vaadin.flow.data.renderer.LitRenderer;
+import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.router.Route;
+
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 @Route("")
 public class Main extends Div {
+
     public DatabaseUtils databaseUtils;
     private final VerticalLayout layout_content;
     private final VerticalLayout layout_dialog;
     private final Tab edit;
     private final Tab home;
 
-    public Main() throws IOException {
+    public Main() throws IOException, SQLException {
         databaseUtils = new DatabaseUtils();
         layout_content = new VerticalLayout();
         layout_dialog = new VerticalLayout();
@@ -49,6 +53,7 @@ public class Main extends Div {
         tabs.addSelectedChangeListener(e -> {setContent(e.getSelectedTab());setContent(tabs.getSelectedTab());});
         add(tabs);
     }
+
     private void setContent(@NotNull Tab tab) {
         layout_content.setVisible(true);
         layout_content.removeAll();
@@ -65,9 +70,6 @@ public class Main extends Div {
             notification.setDuration(1000);
             notification.setPosition(Notification.Position.TOP_CENTER);
 
-            Button Button = new Button(new Button("Dialog Öffnen"));
-            Button.addThemeVariants(ButtonVariant.LUMO_TERTIARY, ButtonVariant.LUMO_SUCCESS);
-
             MenuBar menuBar = new MenuBar();
             menuBar.addThemeVariants(MenuBarVariant.LUMO_LARGE, MenuBarVariant.LUMO_CONTRAST);
 
@@ -75,15 +77,17 @@ public class Main extends Div {
             MenuItem Ldap_item = menuBar.addItem("Ldap");
             MenuItem Link_item = menuBar.addItem("Link");
             MenuItem LdapRole_item = menuBar.addItem("Ldap Role");
-            MenuItem Link_Grp_item = menuBar.addItem("Link");
-            MenuItem Link_tile_item = menuBar.addItem("Ldap Role");
+            MenuItem Link_Grp_item = menuBar.addItem("Link Group");
+            MenuItem Link_Tile_item = menuBar.addItem("Link Tile");
+            MenuItem Icon_item = menuBar.addItem("Icon");
+
 
             Infobox_item.addClickListener(e -> {
                 List<InfoBox> InfoBox = databaseUtils.getInfo_InfoBox();
                 Grid<InfoBox> InfoBox_grid = new Grid<>();
                 InfoBox_grid.addColumn(com.example.webproject.Listen.InfoBox::getRolle).setHeader("Rolle");
                 InfoBox_grid.addColumn(com.example.webproject.Listen.InfoBox::getInfo).setHeader("Info");
-                InfoBox_grid.addThemeVariants(GridVariant.LUMO_WRAP_CELL_CONTENT, GridVariant.LUMO_ROW_STRIPES);
+                InfoBox_grid.addThemeVariants(GridVariant.LUMO_WRAP_CELL_CONTENT, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COLUMN_BORDERS);
                 InfoBox_grid.setSelectionMode(Grid.SelectionMode.NONE);
                 InfoBox_grid.setItems(InfoBox);
 
@@ -140,7 +144,7 @@ public class Main extends Div {
                     databaseUtils.editInfoStudent(tf2.getValue());
                     d2.close();
                     d1.close();
-                    Notification.show("Erfolgreich Gespeichert", 5000, Notification.Position.TOP_CENTER).add(new Button("Dialog Öffnen", click -> d1.open()));
+                    Notification.show("Erfolgreich Gespeichert", 5000, Notification.Position.TOP_CENTER).addThemeVariants(NotificationVariant.LUMO_SUCCESS, NotificationVariant.LUMO_PRIMARY);
                 });
                 closeButton.addClickListener(Click -> d1.close());
 
@@ -153,7 +157,7 @@ public class Main extends Div {
                 Grid<Ldap> Ldap_grid = new Grid<>();
                 Ldap_grid.addColumn(com.example.webproject.Listen.Ldap::getId).setHeader("ID").setFlexGrow(0);
                 Ldap_grid.addColumn(com.example.webproject.Listen.Ldap::getContent).setHeader("Content").setAutoWidth(true);
-                Ldap_grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS);
+                Ldap_grid.addThemeVariants(GridVariant.LUMO_WRAP_CELL_CONTENT, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COLUMN_BORDERS);
                 Ldap_grid.setSelectionMode(Grid.SelectionMode.SINGLE);
                 Ldap_grid.setItems(Ldap);
 
@@ -224,7 +228,7 @@ public class Main extends Div {
                             d1.close();
                             d2.close();
                             d3.close();
-                            Notification.show("Erfolgreich Gespeichert", 5000, Notification.Position.TOP_CENTER).add(new Button("Dialog Öffnen", klick -> d1.open()));
+                            Notification.show("Erfolgreich Gespeichert", 5000, Notification.Position.TOP_CENTER).addThemeVariants(NotificationVariant.LUMO_SUCCESS, NotificationVariant.LUMO_PRIMARY);
                         });
                         d3.open();
                         d3.add(dialogLayout);
@@ -246,7 +250,7 @@ public class Main extends Div {
                             d1.close();
                             d2.close();
                             d3.close();
-                            Notification.show("Erfolgreich Gespeichert", 5000, Notification.Position.TOP_CENTER).add(Button);
+                            Notification.show("Erfolgreich Gespeichert", 5000, Notification.Position.TOP_CENTER);
 
                         });
                     });
@@ -261,7 +265,7 @@ public class Main extends Div {
                     d1.close();
                     d2.close();
                     d3.close();
-                    Notification.show("Erfolgreich Gespeichert", 5000, Notification.Position.TOP_CENTER).add(Button);
+                    Notification.show("Erfolgreich Gespeichert", 5000, Notification.Position.TOP_CENTER).addThemeVariants(NotificationVariant.LUMO_SUCCESS, NotificationVariant.LUMO_PRIMARY);
                 });
                 cancelButton.addClickListener(Click -> {
                     d3.close();
@@ -326,26 +330,26 @@ public class Main extends Div {
                 Button minimizeButton = new Button(VaadinIcon.RESIZE_H.create());
                 minimizeButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
 
-                TextField Linktext = new TextField("Linktext");
-                Linktext.setWidthFull();
-                TextField Link_Group_ID = new TextField("Link Group ID");
-                Link_Group_ID.setWidthFull();
-                TextField Sort = new TextField("Sort");
-                Sort.setWidthFull();
-                TextField Description = new TextField("Description");
-                Description.setWidthFull();
-                TextField URL_ACTIVE = new TextField("URL Active");
-                URL_ACTIVE.setWidthFull();
-                TextField URL_INACTIVE = new TextField("URL InActive");
-                URL_INACTIVE.setWidthFull();
-                TextField Active = new TextField("Active");
-                Active.setWidthFull();
-                TextField Auth_Level = new TextField("Auth Level");
-                Auth_Level.setWidthFull();
-                TextField NewTab = new TextField("NewTab");
-                NewTab.setWidthFull();
+                TextField tf1 = new TextField("Linktext");
+                tf1.setWidthFull();
+                NumberField tf2 = new NumberField("Link Group ID");
+                tf2.setWidthFull();
+                NumberField tf3 = new NumberField("Sort");
+                tf3.setWidthFull();
+                TextField tf4 = new TextField("Description");
+                tf4.setWidthFull();
+                TextField tf5 = new TextField("URL Active");
+                tf5.setWidthFull();
+                NumberField tf6 = new NumberField("URL InActive");
+                tf6.setWidthFull();
+                NumberField tf7 = new NumberField("Active");
+                tf7.setWidthFull();
+                NumberField tf8 = new NumberField("Auth Level");
+                tf8.setWidthFull();
+                NumberField tf9 = new NumberField("NewTab");
+                tf9.setWidthFull();
 
-                VerticalLayout dialogLayout = new VerticalLayout(Linktext, Link_Group_ID, Sort, Description, URL_ACTIVE, URL_INACTIVE, Active, Auth_Level, NewTab);
+                VerticalLayout dialogLayout = new VerticalLayout(tf1, tf2, tf3, tf4, tf5, tf6, tf7, tf8, tf9);
                 dialogLayout.setPadding(false);
                 dialogLayout.setSpacing(false);
                 dialogLayout.setSizeFull();
@@ -368,48 +372,48 @@ public class Main extends Div {
 
                     editButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
                     editButton.addClickListener(Click -> {
-                        Linktext.setValue(Tools.getLinktext());
-                        Link_Group_ID.setValue(Tools.getLink_grp_id());
-                        Sort.setValue(Tools.getSort());
-                        Description.setValue(Tools.getDescription());
-                        URL_ACTIVE.setValue(Tools.getUrl_active());
-                        URL_INACTIVE.setValue(Tools.getUrl_inactive());
-                        Active.setValue(Tools.getActive());
-                        Auth_Level.setValue(Tools.getAuth_level());
-                        NewTab.setValue(Tools.getNewtab());
+                        tf1.setValue(Tools.getLinktext());
+                        tf2.setValue(Double.valueOf(Tools.getLink_grp_id()));
+                        tf3.setValue(Double.valueOf(Tools.getSort()));
+                        tf4.setValue(Tools.getDescription());
+                        tf5.setValue(Tools.getUrl_active());
+                        tf6.setValue(Double.valueOf(Tools.getUrl_inactive()));
+                        tf7.setValue(Double.valueOf(Tools.getActive()));
+                        tf8.setValue(Double.valueOf(Tools.getAuth_level()));
+                        tf9.setValue(Double.valueOf(Tools.getNewtab()));
 
                         sb2.addClickListener(click -> {
                             final int i;
                             i = Integer.parseInt(Tools.getId());
-                            if (Linktext.isEmpty()) {
-                                Linktext.setValue("N/A");
+                            if (tf1.isEmpty()) {
+                                tf1.setValue("N/A");
                             }
-                            if (Link_Group_ID.isEmpty()) {
-                                Link_Group_ID.setValue("1");
+                            if (tf2.isEmpty()) {
+                                tf2.setValue(Double.valueOf(Tools.getLink_grp_id()));
                             }
-                            if (Sort.isEmpty()) {
-                                Sort.setValue("1");
+                            if (tf3.isEmpty()) {
+                                tf3.setValue(Double.valueOf(Tools.getSort()));
                             }
-                            if (Description.isEmpty()) {
-                                Description.setValue("N/A");
+                            if (tf4.isEmpty()) {
+                                tf4.setValue("N/A");
                             }
-                            if (URL_ACTIVE.isEmpty()) {
-                                URL_ACTIVE.setValue("N/A");
+                            if (tf5.isEmpty()) {
+                                tf5.setValue("N/A");
                             }
-                            if (URL_INACTIVE.isEmpty()) {
-                                URL_INACTIVE.setValue("1");
+                            if (tf6.isEmpty()) {
+                                tf6.setValue(Double.valueOf(Tools.getUrl_inactive()));
                             }
-                            if (Active.isEmpty()) {
-                                Active.setValue("1");
+                            if (tf7.isEmpty()) {
+                                tf7.setValue(Double.valueOf(Tools.getActive()));
                             }
-                            if (Auth_Level.isEmpty()) {
-                                Auth_Level.setValue("1");
+                            if (tf8.isEmpty()) {
+                                tf8.setValue(Double.valueOf(Tools.getAuth_level()));
                             }
-                            if (NewTab.isEmpty()) {
-                                NewTab.setValue("1");
+                            if (tf9.isEmpty()) {
+                                tf9.setValue(Double.valueOf(Tools.getNewtab()));
                             }
 
-                            databaseUtils.editInfoLink(i, Linktext.getValue(), Link_Group_ID.getValue(), Sort.getValue(), Description.getValue(), URL_ACTIVE.getValue(), URL_INACTIVE.getValue(), Active.getValue(), Auth_Level.getValue(), NewTab.getValue());
+                            databaseUtils.editInfoLink(i, tf1.getValue(), tf2.getValue(), tf3.getValue(), tf4.getValue(), tf5.getValue(), tf6.getValue(), tf7.getValue(), tf8.getValue(), tf9.getValue());
                             d1.close();
                             d2.close();
                             d3.close();
@@ -437,45 +441,46 @@ public class Main extends Div {
                             d1.close();
                             d2.close();
                             d3.close();
-                            Notification.show("Erfolgreich Gespeichert", 5000, Notification.Position.TOP_CENTER).add(new Button("Dialog Öffnen", klick -> d1.open()));
+                            Notification.show("Erfolgreich Gespeichert", 5000, Notification.Position.TOP_CENTER).addThemeVariants(NotificationVariant.LUMO_SUCCESS, NotificationVariant.LUMO_PRIMARY);
                         });
                     });
                     return new HorizontalLayout(editButton, deleteButton);
                 });
                 sb1.addClickListener(Click -> {
-                    if (Linktext.isEmpty()) {
-                        Linktext.setValue("N/A");
+                    if (tf1.isEmpty()) {
+                        tf1.setValue("N/A");
                     }
-                    if (Link_Group_ID.isEmpty()) {
-                        Link_Group_ID.setValue("1");
+                    if (tf2.isEmpty()) {
+                        tf2.setValue(Double.valueOf("1"));
                     }
-                    if (Sort.isEmpty()) {
-                        Sort.setValue("1");
+                    if (tf3.isEmpty()) {
+                        tf3.setValue(Double.valueOf("1"));
                     }
-                    if (Description.isEmpty()) {
-                        Description.setValue("N/A");
+                    if (tf4.isEmpty()) {
+                        tf4.setValue("N/A");
                     }
-                    if (URL_ACTIVE.isEmpty()) {
-                        URL_ACTIVE.setValue("N/A");
+                    if (tf5.isEmpty()) {
+                        tf5.setValue("N/A");
                     }
-                    if (URL_INACTIVE.isEmpty()) {
-                        URL_INACTIVE.setValue("1");
+                    if (tf6.isEmpty()) {
+                        tf6.setValue(Double.valueOf("1"));
                     }
-                    if (Active.isEmpty()) {
-                        Active.setValue("1");
+                    if (tf7.isEmpty()) {
+                        tf7.setValue(Double.valueOf("1"));
                     }
-                    if (Auth_Level.isEmpty()) {
-                        Auth_Level.setValue("1");
+                    if (tf8.isEmpty()) {
+                        tf8.setValue(Double.valueOf("1"));
                     }
-                    if (NewTab.isEmpty()) {
-                        NewTab.setValue("1");
+                    if (tf9.isEmpty()) {
+                        tf9.setValue(Double.valueOf("1"));
                     }
-                    databaseUtils.addNewIdAndName_Link(Linktext.getValue(), Link_Group_ID.getValue(), Sort.getValue(), Description.getValue(), URL_ACTIVE.getValue(), URL_INACTIVE.getValue(), Active.getValue(), Auth_Level.getValue(), NewTab.getValue());
+
+                    databaseUtils.addNewIdAndName_Link(tf1.getValue(), tf2.getValue(), tf3.getValue(), tf4.getValue(), tf5.getValue(), tf6.getValue(), tf7.getValue(), tf8.getValue(), tf9.getValue());
                     Link_grid.getDataProvider().refreshAll();
                     d1.close();
                     d2.close();
                     d3.close();
-                    Notification.show("Erfolgreich Gespeichert", 5000, Notification.Position.TOP_CENTER).add(new Button("Dialog Öffnen", klick -> d1.open()));
+                    Notification.show("Erfolgreich Gespeichert", 5000, Notification.Position.TOP_CENTER).addThemeVariants(NotificationVariant.LUMO_SUCCESS, NotificationVariant.LUMO_PRIMARY);
                 });
                 cancelButton.addClickListener(Click -> {
                     d3.close();
@@ -498,8 +503,8 @@ public class Main extends Div {
             LdapRole_item.addClickListener(e -> {
                 List<LDAP_ROLE> LdapRole = databaseUtils.getAllInfos_LDAP_ROLE();
                 Grid<LDAP_ROLE> LdapRole_grid = new Grid<>();
-                LdapRole_grid.addColumn(com.example.webproject.Listen.LDAP_ROLE::getId).setHeader("ID").setWidth("75px").setFlexGrow(0);
-                LdapRole_grid.addColumn(com.example.webproject.Listen.LDAP_ROLE::getContent).setHeader("Role Name");
+                LdapRole_grid.addColumn(LDAP_ROLE::getId).setHeader("ID").setWidth("75px").setFlexGrow(0);
+                LdapRole_grid.addColumn(LDAP_ROLE::getContent).setHeader("Role Name");
                 LdapRole_grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_WRAP_CELL_CONTENT, GridVariant.LUMO_ROW_STRIPES);
                 LdapRole_grid.setItems(LdapRole);
                 LdapRole_grid.setVisible(false);
@@ -572,7 +577,7 @@ public class Main extends Div {
                             d1.close();
                             d2.close();
                             d3.close();
-                            Notification.show("Erfolgreich Gespeichert", 5000, Notification.Position.TOP_CENTER).add((Component) Button.addClickListener(klick -> d1.open()));
+                            Notification.show("Erfolgreich Gespeichert", 5000, Notification.Position.TOP_CENTER).addThemeVariants(NotificationVariant.LUMO_SUCCESS, NotificationVariant.LUMO_PRIMARY);
                         });
 
                         d3.open();
@@ -595,7 +600,7 @@ public class Main extends Div {
                             d1.close();
                             d2.close();
                             d3.close();
-                            Notification.show("Erfolgreich Gespeichert", 5000, Notification.Position.TOP_CENTER).add((Component) Button.addClickListener(klick -> d1.open()));
+                            Notification.show("Erfolgreich Gespeichert", 5000, Notification.Position.TOP_CENTER).addThemeVariants(NotificationVariant.LUMO_SUCCESS, NotificationVariant.LUMO_PRIMARY);
                         });
                     });
                     return new HorizontalLayout(editButton, deleteButton);
@@ -609,7 +614,7 @@ public class Main extends Div {
                     d1.close();
                     d2.close();
                     d3.close();
-                    Notification.show("Erfolgreich Gespeichert", 5000, Notification.Position.TOP_CENTER).add((Component) Button.addClickListener(klick -> d1.open()));
+                    Notification.show("Erfolgreich Gespeichert", 5000, Notification.Position.TOP_CENTER).addThemeVariants(NotificationVariant.LUMO_SUCCESS, NotificationVariant.LUMO_PRIMARY);
                 });
                 cancelButton.addClickListener(Click -> {
                     d3.close();
@@ -630,14 +635,16 @@ public class Main extends Div {
                 d1.add(heading, tools, LdapRole_grid);
             });
             Link_Grp_item.addClickListener(e -> {
-                List<LDAP_ROLE> LdapRole = databaseUtils.getAllInfos_LDAP_ROLE();
-                Grid<LDAP_ROLE> LdapRole_grid = new Grid<>();
-                LdapRole_grid.addColumn(com.example.webproject.Listen.LDAP_ROLE::getId).setHeader("ID").setWidth("75px").setFlexGrow(0);
-                LdapRole_grid.addColumn(com.example.webproject.Listen.LDAP_ROLE::getContent).setHeader("Role Name");
-                LdapRole_grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_WRAP_CELL_CONTENT, GridVariant.LUMO_ROW_STRIPES);
-                LdapRole_grid.setItems(LdapRole);
-                LdapRole_grid.setVisible(false);
-                LdapRole_grid.getId();
+                List<Link_grp> LinkGrp = databaseUtils.getInfo_Link_Grp();
+                Grid<Link_grp> LinkGrp_grid = new Grid<>();
+                LinkGrp_grid.addThemeVariants(GridVariant.LUMO_WRAP_CELL_CONTENT, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COLUMN_BORDERS);
+                LinkGrp_grid.addColumn(Link_grp::getId).setHeader("ID").setWidth("75px").setFlexGrow(0);
+                LinkGrp_grid.addColumn(Link_grp::getGrp_Linktext).setHeader("Linktext_Grp");
+                LinkGrp_grid.addColumn(Link_grp::getIcon_Id).setHeader("Icon_Id");
+                LinkGrp_grid.addColumn(Link_grp::getTile_Id).setHeader("Tile_Id");
+                LinkGrp_grid.addColumn(Link_grp::getSort).setHeader("Sort");
+                LinkGrp_grid.addColumn(Link_grp::getDescription).setHeader("Description");
+                LinkGrp_grid.setItems(LinkGrp);
 
                 Dialog d1 = new Dialog();
                 Dialog d2 = new Dialog();
@@ -648,7 +655,7 @@ public class Main extends Div {
                 Label info = new Label("WARNUNG Dieser Vorgang kann nicht rückgängig gemacht werden");
                 info.getStyle().set("color", "red");
 
-                H2 H2 = new H2("Verzeichnis-Liste: Ldap Role");
+                H2 H2 = new H2("Verzeichnis-Liste: Link Group");
                 H2.getStyle().set("margin", "0 auto 0 0");
                 H2 H3 = new H2("");
                 H2.getStyle().set("margin", "0 auto 0 0");
@@ -668,10 +675,18 @@ public class Main extends Div {
                 Button minimizeButton = new Button(VaadinIcon.RESIZE_H.create());
                 minimizeButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
 
-                TextField tf1 = new TextField("Role Name");
+                TextField tf1 = new TextField("Linktext_Grp");
                 tf1.setWidthFull();
+                NumberField tf2 = new NumberField("Icon_Id");
+                tf2.setWidthFull();
+                NumberField tf3 = new NumberField("Tile_Id");
+                tf3.setWidthFull();
+                NumberField tf4 = new NumberField("Sort");
+                tf4.setWidthFull();
+                TextField tf5 = new TextField("Description");
+                tf5.setWidthFull();
 
-                VerticalLayout dialogLayout = new VerticalLayout(tf1);
+                VerticalLayout dialogLayout = new VerticalLayout(tf1, tf2, tf3, tf4, tf5);
                 dialogLayout.setPadding(false);
                 dialogLayout.setSpacing(false);
                 dialogLayout.setSizeFull();
@@ -686,27 +701,43 @@ public class Main extends Div {
                 d1.setWidthFull();
                 d1.getFooter().add();
 
-                LdapRole_grid.setVisible(d1.isOpened());
-                LdapRole_grid.addComponentColumn(Tools -> {
+                LinkGrp_grid.setVisible(d1.isOpened());
+                LinkGrp_grid.addComponentColumn(Tools -> {
                     Button deleteButton = new Button(VaadinIcon.TRASH.create());
                     Button editButton = new Button(VaadinIcon.EDIT.create());
                     Button sb2 = new Button("Speichern");
 
                     editButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
                     editButton.addClickListener(Click -> {
-                        tf1.setValue(Tools.getContent());
+                        tf1.setValue(Tools.getGrp_Linktext());
+                        tf2.setValue(Double.valueOf(Tools.getIcon_Id()));
+                        tf3.setValue(Double.valueOf(Tools.getTile_Id()));
+                        tf4.setValue(Double.valueOf(Tools.getSort()));
+                        tf5.setValue(Tools.getDescription());
                         sb2.addClickListener(click -> {
                             final int i;
                             i = Integer.parseInt(Tools.getId());
                             if (tf1.isEmpty()) {
                                 tf1.setValue("N/A");
                             }
-                            databaseUtils.editInfoLDAP_ROLE(i, tf1.getValue());
-                            LdapRole_grid.getDataProvider().refreshAll();
+                            if (tf2.isEmpty()) {
+                                tf2.setValue(Double.valueOf(Tools.getIcon_Id()));
+                            }
+                            if (tf3.isEmpty()) {
+                                tf3.setValue(Double.valueOf(Tools.getTile_Id()));
+                            }
+                            if (tf4.isEmpty()) {
+                                tf4.setValue(Double.valueOf(Tools.getSort()));
+                            }
+                            if (tf5.isEmpty()) {
+                                tf5.setValue("N/A");
+                            }
+                            databaseUtils.editInfoLink_Grp(i, tf1.getValue(), tf2.getValue(), tf3.getValue(), tf4.getValue(), tf5.getValue());
+                            LinkGrp_grid.getDataProvider().refreshAll();
                             d1.close();
                             d2.close();
                             d3.close();
-                            Notification.show("Erfolgreich Gespeichert", 5000, Notification.Position.TOP_CENTER).add((Component) Button.addClickListener(klick -> d1.open()));
+                            Notification.show("Erfolgreich Gespeichert", 5000, Notification.Position.TOP_CENTER).addThemeVariants(NotificationVariant.LUMO_SUCCESS, NotificationVariant.LUMO_PRIMARY);
                         });
 
                         d3.open();
@@ -724,26 +755,39 @@ public class Main extends Div {
                         d2.add("Dieser Vorgang kann nicht Rückgänig gemacht werden !");
                         d2.getFooter().add(db1, cancelButton);
                         db1.addClickListener(click -> {
-                            databaseUtils.deleteInfoLDAP_ROLE(Integer.parseInt(Tools.getId()));
-                            LdapRole_grid.getDataProvider().refreshAll();
+                            databaseUtils.deleteInfoLink_Grp(Integer.parseInt(Tools.getId()));
+                            LinkGrp_grid.getDataProvider().refreshAll();
                             d1.close();
                             d2.close();
                             d3.close();
-                            Notification.show("Erfolgreich Gespeichert", 5000, Notification.Position.TOP_CENTER).add((Component) Button.addClickListener(klick -> d1.open()));
+                            Notification.show("Erfolgreich Gespeichert", 5000, Notification.Position.TOP_CENTER).add(new Button("Dialog Öffnen", klick -> d1.open()));
                         });
                     });
                     return new HorizontalLayout(editButton, deleteButton);
                 }).setWidth("125px").setFlexGrow(0);
+
                 sb1.addClickListener(Click -> {
                     if (tf1.isEmpty()) {
                         tf1.setValue("N/A");
                     }
-                    databaseUtils.addNewIdAndName_ROLE(tf1.getValue());
-                    LdapRole_grid.getDataProvider().refreshAll();
+                    if (tf2.isEmpty()) {
+                        tf2.setValue(Double.valueOf("1"));
+                    }
+                    if (tf3.isEmpty()) {
+                        tf3.setValue(Double.valueOf("1"));
+                    }
+                    if (tf4.isEmpty()) {
+                        tf4.setValue(Double.valueOf("1"));
+                    }
+                    if (tf5.isEmpty()) {
+                        tf5.setValue("N/A");
+                    }
+                    databaseUtils.addNewIdAndName_Link_Grp(tf1.getValue(), tf2.getValue(), tf3.getValue(), tf4.getValue(), tf5.getValue());
+                    LinkGrp_grid.getDataProvider().refreshAll();
                     d1.close();
                     d2.close();
                     d3.close();
-                    Notification.show("Erfolgreich Gespeichert", 5000, Notification.Position.TOP_CENTER).add((Component) Button.addClickListener(klick -> d1.open()));
+                    Notification.show("Erfolgreich Gespeichert", 5000, Notification.Position.TOP_CENTER).addThemeVariants(NotificationVariant.LUMO_SUCCESS, NotificationVariant.LUMO_PRIMARY);
                 });
                 cancelButton.addClickListener(Click -> {
                     d3.close();
@@ -757,21 +801,22 @@ public class Main extends Div {
                 });
                 closeButton.addClickListener(Click -> {
                     d1.close();
-                    LdapRole_grid.removeAllColumns();
+                    LinkGrp_grid.removeAllColumns();
                 });
-                maximizeButton.addClickListener(Click -> LdapRole_grid.setAllRowsVisible(true));
-                minimizeButton.addClickListener(Click -> LdapRole_grid.setAllRowsVisible(false));
-                d1.add(heading, tools, LdapRole_grid);
+                maximizeButton.addClickListener(Click -> LinkGrp_grid.setAllRowsVisible(true));
+                minimizeButton.addClickListener(Click -> LinkGrp_grid.setAllRowsVisible(false));
+                d1.add(heading, tools, LinkGrp_grid);
             });
-            Link_tile_item.addClickListener(e -> {
-                List<LDAP_ROLE> LdapRole = databaseUtils.getAllInfos_LDAP_ROLE();
-                Grid<LDAP_ROLE> LdapRole_grid = new Grid<>();
-                LdapRole_grid.addColumn(com.example.webproject.Listen.LDAP_ROLE::getId).setHeader("ID").setWidth("75px").setFlexGrow(0);
-                LdapRole_grid.addColumn(com.example.webproject.Listen.LDAP_ROLE::getContent).setHeader("Role Name");
-                LdapRole_grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_WRAP_CELL_CONTENT, GridVariant.LUMO_ROW_STRIPES);
-                LdapRole_grid.setItems(LdapRole);
-                LdapRole_grid.setVisible(false);
-                LdapRole_grid.getId();
+            Link_Tile_item.addClickListener(e -> {
+                List<Link_Tile> LinkTile = databaseUtils.getInfo_Link_Tile();
+                Grid<Link_Tile> LinkTile_grid = new Grid<>();
+                LinkTile_grid.addThemeVariants(GridVariant.LUMO_WRAP_CELL_CONTENT, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COLUMN_BORDERS);
+                LinkTile_grid.addColumn(Link_Tile::getId).setHeader("ID").setWidth("75px").setFlexGrow(0);
+                LinkTile_grid.addColumn(Link_Tile::getName).setHeader("Name");
+                LinkTile_grid.addColumn(Link_Tile::getDescription).setHeader("Description");
+                LinkTile_grid.addColumn(Link_Tile::getSort).setHeader("Sort");
+                LinkTile_grid.addColumn(Link_Tile::getTile_Column_Id).setHeader("Tile Column Id");
+                LinkTile_grid.setItems(LinkTile);
 
                 Dialog d1 = new Dialog();
                 Dialog d2 = new Dialog();
@@ -782,7 +827,7 @@ public class Main extends Div {
                 Label info = new Label("WARNUNG Dieser Vorgang kann nicht rückgängig gemacht werden");
                 info.getStyle().set("color", "red");
 
-                H2 H2 = new H2("Verzeichnis-Liste: Ldap Role");
+                H2 H2 = new H2("Verzeichnis-Liste: Link Tile");
                 H2.getStyle().set("margin", "0 auto 0 0");
                 H2 H3 = new H2("");
                 H2.getStyle().set("margin", "0 auto 0 0");
@@ -802,10 +847,16 @@ public class Main extends Div {
                 Button minimizeButton = new Button(VaadinIcon.RESIZE_H.create());
                 minimizeButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
 
-                TextField tf1 = new TextField("Role Name");
+                TextField tf1 = new TextField("Name");
                 tf1.setWidthFull();
+                TextField tf2 = new TextField("Description");
+                tf2.setWidthFull();
+                NumberField tf3 = new NumberField("Sort");
+                tf3.setWidthFull();
+                NumberField tf4 = new NumberField("Tile Column Id");
+                tf4.setWidthFull();
 
-                VerticalLayout dialogLayout = new VerticalLayout(tf1);
+                VerticalLayout dialogLayout = new VerticalLayout(tf1, tf2, tf3, tf4);
                 dialogLayout.setPadding(false);
                 dialogLayout.setSpacing(false);
                 dialogLayout.setSizeFull();
@@ -820,27 +871,39 @@ public class Main extends Div {
                 d1.setWidthFull();
                 d1.getFooter().add();
 
-                LdapRole_grid.setVisible(d1.isOpened());
-                LdapRole_grid.addComponentColumn(Tools -> {
+                LinkTile_grid.setVisible(d1.isOpened());
+                LinkTile_grid.addComponentColumn(Tools -> {
                     Button deleteButton = new Button(VaadinIcon.TRASH.create());
                     Button editButton = new Button(VaadinIcon.EDIT.create());
                     Button sb2 = new Button("Speichern");
 
                     editButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
                     editButton.addClickListener(Click -> {
-                        tf1.setValue(Tools.getContent());
+                        tf1.setValue(Tools.getName());
+                        tf2.setValue(Tools.getDescription());
+                        tf3.setValue(Double.valueOf(Tools.getSort()));
+                        tf4.setValue(Double.valueOf(Tools.getTile_Column_Id()));
                         sb2.addClickListener(click -> {
                             final int i;
                             i = Integer.parseInt(Tools.getId());
                             if (tf1.isEmpty()) {
-                                tf1.setValue("N/A");
+                                tf1.setValue(Tools.getName());
                             }
-                            databaseUtils.editInfoLDAP_ROLE(i, tf1.getValue());
-                            LdapRole_grid.getDataProvider().refreshAll();
+                            if (tf2.isEmpty()) {
+                                tf2.setValue(Tools.getDescription());
+                            }
+                            if (tf3.isEmpty()) {
+                                tf3.setValue(Double.valueOf(Tools.getSort()));
+                            }
+                            if (tf4.isEmpty()) {
+                                tf4.setValue(Double.valueOf(Tools.getTile_Column_Id()));
+                            }
+                            databaseUtils.editInfoLink_Tile(i, tf1.getValue(), tf2.getValue(), tf3.getValue(), tf4.getValue());
+                            LinkTile_grid.getDataProvider().refreshAll();
                             d1.close();
                             d2.close();
                             d3.close();
-                            Notification.show("Erfolgreich Gespeichert", 5000, Notification.Position.TOP_CENTER).add((Component) Button.addClickListener(klick -> d1.open()));
+                            Notification.show("Erfolgreich Gespeichert", 5000, Notification.Position.TOP_CENTER).addThemeVariants(NotificationVariant.LUMO_SUCCESS, NotificationVariant.LUMO_PRIMARY);
                         });
 
                         d3.open();
@@ -858,26 +921,36 @@ public class Main extends Div {
                         d2.add("Dieser Vorgang kann nicht Rückgänig gemacht werden !");
                         d2.getFooter().add(db1, cancelButton);
                         db1.addClickListener(click -> {
-                            databaseUtils.deleteInfoLDAP_ROLE(Integer.parseInt(Tools.getId()));
-                            LdapRole_grid.getDataProvider().refreshAll();
+                            databaseUtils.deleteInfoLink_Tile(Integer.parseInt(Tools.getId()));
+                            LinkTile_grid.getDataProvider().refreshAll();
                             d1.close();
                             d2.close();
                             d3.close();
-                            Notification.show("Erfolgreich Gespeichert", 5000, Notification.Position.TOP_CENTER).add((Component) Button.addClickListener(klick -> d1.open()));
+                            Notification.show("Erfolgreich Gespeichert", 5000, Notification.Position.TOP_CENTER).addThemeVariants(NotificationVariant.LUMO_SUCCESS, NotificationVariant.LUMO_PRIMARY);
                         });
                     });
                     return new HorizontalLayout(editButton, deleteButton);
                 }).setWidth("125px").setFlexGrow(0);
+
                 sb1.addClickListener(Click -> {
                     if (tf1.isEmpty()) {
                         tf1.setValue("N/A");
                     }
-                    databaseUtils.addNewIdAndName_ROLE(tf1.getValue());
-                    LdapRole_grid.getDataProvider().refreshAll();
+                    if (tf2.isEmpty()) {
+                        tf2.setValue("N/A");
+                    }
+                    if (tf3.isEmpty()) {
+                        tf3.setValue(Double.valueOf("1"));
+                    }
+                    if (tf4.isEmpty()) {
+                        tf4.setValue(Double.valueOf("1"));
+                    }
+                    databaseUtils.addNewIdAndName_Link_Tile(tf1.getValue(), tf2.getValue(), tf3.getValue(), tf4.getValue());
+                    LinkTile_grid.getDataProvider().refreshAll();
                     d1.close();
                     d2.close();
                     d3.close();
-                    Notification.show("Erfolgreich Gespeichert", 5000, Notification.Position.TOP_CENTER).add((Component) Button.addClickListener(klick -> d1.open()));
+                    Notification.show("Erfolgreich Gespeichert", 5000, Notification.Position.TOP_CENTER).addThemeVariants(NotificationVariant.LUMO_SUCCESS, NotificationVariant.LUMO_PRIMARY);
                 });
                 cancelButton.addClickListener(Click -> {
                     d3.close();
@@ -891,13 +964,156 @@ public class Main extends Div {
                 });
                 closeButton.addClickListener(Click -> {
                     d1.close();
-                    LdapRole_grid.removeAllColumns();
+                    LinkTile_grid.removeAllColumns();
                 });
-                maximizeButton.addClickListener(Click -> LdapRole_grid.setAllRowsVisible(true));
-                minimizeButton.addClickListener(Click -> LdapRole_grid.setAllRowsVisible(false));
-                d1.add(heading, tools, LdapRole_grid);
+                maximizeButton.addClickListener(Click -> LinkTile_grid.setAllRowsVisible(true));
+                minimizeButton.addClickListener(Click -> LinkTile_grid.setAllRowsVisible(false));
+                d1.add(heading, tools, LinkTile_grid);
             });
+            Icon_item.addClickListener(e -> {
+                List<Icon> Icon = databaseUtils.getInfoIcon();
+                Grid<Icon> Icon_grid = new Grid<>();
+                Icon_grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_WRAP_CELL_CONTENT);
+                Icon_grid.addColumn(com.example.webproject.Listen.Icon::getId).setHeader("Id");
+                Icon_grid.addColumn(createEmployeeRenderer()).setHeader("Icon");
 
+                Icon_grid.addColumn(com.example.webproject.Listen.Icon::getContentType).setHeader("ContentType");
+                Icon_grid.setItems(Icon);
+
+                Dialog d1 = new Dialog();
+                Dialog d2 = new Dialog();
+                d2.setWidth(60, Unit.PERCENTAGE);
+                Dialog d3 = new Dialog();
+                d3.setWidth(60, Unit.PERCENTAGE);
+
+                Label info = new Label("WARNUNG Dieser Vorgang kann nicht rückgängig gemacht werden");
+                info.getStyle().set("color", "red");
+
+                H2 H2 = new H2("Verzeichnis-Liste: Icon");
+                H2.getStyle().set("margin", "0 auto 0 0");
+                H2 H3 = new H2("");
+                H2.getStyle().set("margin", "0 auto 0 0");
+
+                Button sb1 = new Button("Speichern");
+                Button db1 = new Button("Ja, Löschen");
+                db1.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
+                sb1.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SUCCESS);
+                Button cancelButton = new Button("Nein, Abbrechen");
+                cancelButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+                Button createButton = new Button("Hinzufügen");
+                createButton.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_SUCCESS);
+                Button closeButton = new Button(VaadinIcon.CLOSE.create());
+                closeButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY, ButtonVariant.LUMO_ERROR);
+                Button maximizeButton = new Button(VaadinIcon.VIEWPORT.create());
+                maximizeButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+                Button minimizeButton = new Button(VaadinIcon.RESIZE_H.create());
+                minimizeButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+
+                TextField tf1 = new TextField("Name");
+                tf1.setWidthFull();
+                TextField tf2 = new TextField("Description");
+                tf2.setWidthFull();
+
+                VerticalLayout dialogLayout = new VerticalLayout(tf1, tf2);
+                dialogLayout.setPadding(false);
+                dialogLayout.setSpacing(false);
+                dialogLayout.setSizeFull();
+
+                HorizontalLayout heading = new HorizontalLayout(H2, minimizeButton, maximizeButton, closeButton);
+                heading.setAlignItems(FlexComponent.Alignment.CENTER);
+                HorizontalLayout tools = new HorizontalLayout(H3, createButton);
+                heading.setAlignItems(FlexComponent.Alignment.CENTER);
+
+                d1.open();
+                d1.setCloseOnOutsideClick(false);
+                d1.setWidthFull();
+                d1.getFooter().add();
+
+                Icon_grid.setVisible(d1.isOpened());
+                Icon_grid.addComponentColumn(Tools -> {
+                    Button deleteButton = new Button(VaadinIcon.TRASH.create());
+                    Button editButton = new Button(VaadinIcon.EDIT.create());
+                    Button sb2 = new Button("Speichern");
+
+                    editButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+                    editButton.addClickListener(Click -> {
+                        tf1.setValue(String.valueOf(Tools.getIcon()));
+                        tf2.setValue(Tools.getContentType());
+                        sb2.addClickListener(click -> {
+                            final int i;
+                            i = Integer.parseInt(Tools.getId());
+                            if (tf1.isEmpty()) {
+                                tf1.setValue(String.valueOf(Tools.getIcon()));
+                            }
+                            if (tf2.isEmpty()) {
+                                tf2.setValue(Tools.getContentType());
+                            }
+                            databaseUtils.editInfoIcon(i, tf1.getValue(), tf2.getValue());
+                            Icon_grid.getDataProvider().refreshAll();
+                            d1.close();
+                            d2.close();
+                            d3.close();
+                            Notification.show("Erfolgreich Gespeichert", 5000, Notification.Position.TOP_CENTER).addThemeVariants(NotificationVariant.LUMO_SUCCESS, NotificationVariant.LUMO_PRIMARY);
+                        });
+
+                        d3.open();
+                        d3.add(dialogLayout);
+                        d3.getFooter().add(sb2);
+                    });
+
+                    deleteButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY, ButtonVariant.LUMO_ERROR);
+                    deleteButton.addClickListener(Click -> {
+                        final int i;
+                        i = Integer.parseInt(Tools.getId());
+                        d2.open();
+                        d2.setHeaderTitle("Verzeichnis " + i);
+                        d2.setCloseOnOutsideClick(false);
+                        d2.add("Dieser Vorgang kann nicht Rückgänig gemacht werden !");
+                        d2.getFooter().add(db1, cancelButton);
+                        db1.addClickListener(click -> {
+                            databaseUtils.deleteInfoIcon(Integer.parseInt(Tools.getId()));
+                            Icon_grid.getDataProvider().refreshAll();
+                            d1.close();
+                            d2.close();
+                            d3.close();
+                            Notification.show("Erfolgreich Gespeichert", 5000, Notification.Position.TOP_CENTER).addThemeVariants(NotificationVariant.LUMO_SUCCESS, NotificationVariant.LUMO_PRIMARY);
+                        });
+                    });
+                    return new HorizontalLayout(editButton, deleteButton);
+                }).setWidth("125px").setFlexGrow(0);
+
+                sb1.addClickListener(Click -> {
+                    if (tf1.isEmpty()) {
+                        tf1.setValue("N/A");
+                    }
+                    if (tf2.isEmpty()) {
+                        tf2.setValue("N/A");
+                    }
+                    databaseUtils.addNewIdAndNameIcon(tf1.getValue(), tf2.getValue());
+                    Icon_grid.getDataProvider().refreshAll();
+                    d1.close();
+                    d2.close();
+                    d3.close();
+                    Notification.show("Erfolgreich Gespeichert", 5000, Notification.Position.TOP_CENTER).addThemeVariants(NotificationVariant.LUMO_SUCCESS, NotificationVariant.LUMO_PRIMARY);
+                });
+                cancelButton.addClickListener(Click -> {
+                    d3.close();
+                    d2.close();
+                });
+                createButton.addClickListener(Click -> {
+                    d3.open();
+                    d3.add(dialogLayout);
+                    d3.setCloseOnOutsideClick(false);
+                    d3.getFooter().add(sb1, cancelButton);
+                });
+                closeButton.addClickListener(Click -> {
+                    d1.close();
+                    Icon_grid.removeAllColumns();
+                });
+                maximizeButton.addClickListener(Click -> Icon_grid.setAllRowsVisible(true));
+                minimizeButton.addClickListener(Click -> Icon_grid.setAllRowsVisible(false));
+                d1.add(heading, tools, Icon_grid);
+            });
             layout_content.add(menuBar);
         }
         if (tab.equals(home)) {
@@ -908,9 +1124,6 @@ public class Main extends Div {
         add(layout_content, layout_dialog);
     }
 }
-
-
-
 
 
 //Copyright LukasG1mLY

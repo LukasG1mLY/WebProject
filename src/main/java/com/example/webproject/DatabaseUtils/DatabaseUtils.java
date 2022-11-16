@@ -1,11 +1,10 @@
 package com.example.webproject.DatabaseUtils;
 
-import com.example.webproject.Listen.InfoBox;
-import com.example.webproject.Listen.LDAP_ROLE;
-import com.example.webproject.Listen.Ldap;
-import com.example.webproject.Listen.Link;
+import com.example.webproject.Listen.*;
+import com.example.webproject.Listen.Icon;
 import org.ini4j.Wini;
 
+import javax.imageio.stream.ImageOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -131,7 +130,19 @@ public class DatabaseUtils extends SQLUtils {
             System.out.println("Failed to delete ROW_ " + (ID));
         }
     }
-    public void addNewIdAndName_Link(String Linktext, String Link_group_ID, String Sort, String Description, String Url_Active, String Url_inActive, String Active, String Auth_Level, String NewTab) {
+    public void deleteInfoLink_Grp(int id)  {
+        try {
+            onExecute("DELETE FROM LINK_GRP WHERE ID =?", id);
+            System.out.println("Deleted ROW_" + (id));
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("Failed to delete ROW_ " + (id));
+        }
+
+
+    }
+    public void addNewIdAndName_Link(String Linktext, Double Link_group_ID, Double Sort, String Description, String Url_Active, Double Url_inActive, Double Active, Double Auth_Level, Double NewTab) {
         try
         {
             ResultSet rs = onQuery("SELECT MAX(ID) FROM LINK ORDER BY ID");
@@ -171,6 +182,19 @@ public class DatabaseUtils extends SQLUtils {
             System.out.println("Die ID: " + newId + " wurde zum verzeichnis Hinzugefügt.");
 
 
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public void addNewIdAndName_Link_Grp(String pGrp_Linktext, Double pIcon_Id, Double pTile_Id, Double pSort, String pDescription) {
+        try
+        {
+            ResultSet rs = onQuery("SELECT MAX(ID) FROM LINK_GRP ORDER BY ID");
+            rs.next();
+            int newId = rs.getInt("MAX(ID)") + 1;
+            onExecute("INSERT INTO LINK_GRP VALUES(?,?,?,?,?,?)", newId, pGrp_Linktext, pIcon_Id, pTile_Id, pSort, pDescription);
+            System.out.println("Die ID: " + newId + " wurde zum verzeichnis Hinzugefügt.");
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -242,7 +266,27 @@ public class DatabaseUtils extends SQLUtils {
         }
         return list;
     }
-    public void editInfoLink(int Id, String Linktext, String Link_group_ID, String Sort, String Description, String Url_Active, String Url_inActive, String Active, String Auth_Level, String NewTab) {
+    public List<Link_grp> getInfo_Link_Grp() {
+        ResultSet rs;
+        List<Link_grp> list = new ArrayList<>();
+        try {
+            rs = onQuery("SELECT * FROM LINK_GRP ORDER BY ID");
+            while (rs.next()) {
+                list.add(new Link_grp(
+                        rs.getString("ID"),
+                        rs.getString("GRP_LINKTEXT"),
+                        rs.getString("ICON_ID"),
+                        rs.getString("TILE_ID"),
+                        rs.getString("SORT"),
+                        rs.getString("DESCRIPTION")));
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+    public void editInfoLink(int Id, String Linktext, Double Link_group_ID, Double Sort, String Description, String Url_Active, Double Url_inActive, Double Active, Double Auth_Level, Double NewTab) {
 
         try {
             onExecute("UPDATE LINK SET LINKTEXT =?,LINK_GRP_ID =?,SORT =?,DESCRIPTION =?,URL_ACTIVE =?,URL_INACTIVE =?,ACTIVE =?,AUTH_LEVEL =?,NEWTAB =? WHERE ID =?",Linktext, Link_group_ID, Sort, Description, Url_Active, Url_inActive, Active, Auth_Level, NewTab, Id);
@@ -252,5 +296,118 @@ public class DatabaseUtils extends SQLUtils {
             System.out.println("Failed onExecute by LINK_" + Id);
         }
 
+    }
+    public void editInfoLink_Grp(int id, String pGrp_Linktext, Double pIcon_Id, Double pTile_Id, Double pSort, String pDescription) {
+        try {
+            onExecute("UPDATE LINK_GRP SET GRP_LINKTEXT =?, ICON_ID =?, TILE_ID =?, SORT =?, DESCRIPTION =? WHERE ID =?", pGrp_Linktext, pIcon_Id, pTile_Id, pSort, pDescription, id);
+            System.out.println("Changed Info Link group:" + id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("Failed onExecute by Link group:" + id);
+        }
+    }
+    public void editInfoLink_Tile(int id, String pName, String pDescription, Double pSort, Double pTile_Column_Id) {
+        try {
+            onExecute("UPDATE LINK_TILE SET NAME =?, DESCRIPTION =?, SORT =?, TILE_COLUMN_ID =? WHERE ID =?", pName, pDescription, pSort, pTile_Column_Id, id);
+            System.out.println("Changed Info Link Tile:" + id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("Failed onExecute by Link Tile:" + id);
+        }
+    }
+    public void deleteInfoLink_Tile(int id)  {
+        try {
+            onExecute("DELETE FROM LINK_TILE WHERE ID =?", id);
+            System.out.println("Deleted ROW_" + (id));
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("Failed to delete ROW_ " + (id));
+        }
+
+
+    }
+    public List<Link_Tile> getInfo_Link_Tile() {
+        ResultSet rs;
+        List<Link_Tile> list = new ArrayList<>();
+        try {
+            rs = onQuery("SELECT * FROM LINK_TILE ORDER BY ID");
+            while (rs.next()) {
+                list.add(new Link_Tile(
+                        rs.getString("ID"),
+                        rs.getString("NAME"),
+                        rs.getString("DESCRIPTION"),
+                        rs.getString("SORT"),
+                        rs.getString("TILE_COLUMN_ID")));
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+    public void addNewIdAndName_Link_Tile(String pName, String pDescription, Double pSort, Double pTile_Column_Id) {
+        try
+        {
+            ResultSet rs = onQuery("SELECT MAX(ID) FROM LINK_TILE ORDER BY ID");
+            rs.next();
+            int newId = rs.getInt("MAX(ID)") + 1;
+            onExecute("INSERT INTO LINK_TILE VALUES(?,?,?,?,?)", newId, pName, pDescription, pSort, pTile_Column_Id);
+            System.out.println("Die ID: " + newId + " wurde zum verzeichnis Hinzugefügt.");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public void editInfoIcon(int id,String pIcon, String pContentType) {
+        try {
+            onExecute("UPDATE ICON SET NAME =?, DESCRIPTION =?, SORT =?, TILE_COLUMN_ID =? WHERE ID =?", pIcon, pContentType, id);
+            System.out.println("Changed Info Icon:" + id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("Failed onExecute by Icon :" + id);
+        }
+    }
+    public void deleteInfoIcon(int id)  {
+        try {
+            onExecute("DELETE FROM ICON WHERE ID =?", id);
+            System.out.println("Deleted ROW_" + (id));
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("Failed to delete Row " + (id));
+        }
+
+
+    }
+    public List<Icon> getInfoIcon() {
+        ResultSet rs;
+        List<Icon> list = new ArrayList<>();
+        try {
+            rs = onQuery("SELECT * FROM ICON ORDER BY ID");
+            while (rs.next()) {
+                list.add(new Icon(
+                        rs.getString("ID"),
+                        rs.getBlob("ICON"),
+                        rs.getString("CONTENTTYPE")));
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+    public void addNewIdAndNameIcon(String pIcon, String pContentType) {
+        try
+        {
+            ResultSet rs = onQuery("SELECT MAX(ID) FROM ICON ORDER BY ID");
+            rs.next();
+            int newId = rs.getInt("MAX(ID)") + 1;
+            onExecute("INSERT INTO ICON VALUES(?,?,?,?,?)", newId, pIcon, pContentType);
+            System.out.println("Die ID: " + newId + " wurde zum verzeichnis Hinzugefügt.");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
