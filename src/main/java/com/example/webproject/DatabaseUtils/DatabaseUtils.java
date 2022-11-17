@@ -1,12 +1,9 @@
 package com.example.webproject.DatabaseUtils;
 
 import com.example.webproject.Listen.*;
-import com.example.webproject.Listen.Icon;
 import org.ini4j.Wini;
 
-import javax.imageio.stream.ImageOutputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -353,57 +350,6 @@ public class DatabaseUtils extends SQLUtils {
             rs.next();
             int newId = rs.getInt("MAX(ID)") + 1;
             onExecute("INSERT INTO LINK_TILE VALUES(?,?,?,?,?)", newId, pName, pDescription, pSort, pTile_Column_Id);
-            System.out.println("Die ID: " + newId + " wurde zum verzeichnis Hinzugefügt.");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    public void editInfoIcon(int id,String pIcon, String pContentType) {
-        try {
-            onExecute("UPDATE ICON SET NAME =?, DESCRIPTION =?, SORT =?, TILE_COLUMN_ID =? WHERE ID =?", pIcon, pContentType, id);
-            System.out.println("Changed Info Icon:" + id);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println("Failed onExecute by Icon :" + id);
-        }
-    }
-    public void deleteInfoIcon(int id)  {
-        try {
-            onExecute("DELETE FROM ICON WHERE ID =?", id);
-            System.out.println("Deleted ROW_" + (id));
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println("Failed to delete Row " + (id));
-        }
-
-
-    }
-    public List<Icon> getInfoIcon() {
-        ResultSet rs;
-        List<Icon> list = new ArrayList<>();
-        try {
-            rs = onQuery("SELECT * FROM ICON ORDER BY ID");
-            while (rs.next()) {
-                list.add(new Icon(
-                        rs.getString("ID"),
-                        rs.getBlob("ICON"),
-                        rs.getString("CONTENTTYPE")));
-            }
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        return list;
-    }
-    public void addNewIdAndNameIcon(String pIcon, String pContentType) {
-        try
-        {
-            ResultSet rs = onQuery("SELECT MAX(ID) FROM ICON ORDER BY ID");
-            rs.next();
-            int newId = rs.getInt("MAX(ID)") + 1;
-            onExecute("INSERT INTO ICON VALUES(?,?,?,?,?)", newId, pIcon, pContentType);
             System.out.println("Die ID: " + newId + " wurde zum verzeichnis Hinzugefügt.");
         }
         catch (Exception e) {
