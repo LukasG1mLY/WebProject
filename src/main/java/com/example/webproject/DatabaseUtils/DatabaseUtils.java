@@ -93,6 +93,35 @@ public class DatabaseUtils extends SQLUtils {
             System.out.println("Failed onExecute by LDAP_ROLE " + ID);
         }
     }
+    public void editInfoLink(int Id, String Linktext, Double Link_group_ID, Double Sort, String Description, String Url_Active, Double Url_inActive, Double Active, Double Auth_Level, Double NewTab) {
+
+        try {
+            onExecute("UPDATE LINK SET LINKTEXT =?,LINK_GRP_ID =?,SORT =?,DESCRIPTION =?,URL_ACTIVE =?,URL_INACTIVE =?,ACTIVE =?,AUTH_LEVEL =?,NEWTAB =? WHERE ID =?",Linktext, Link_group_ID, Sort, Description, Url_Active, Url_inActive, Active, Auth_Level, NewTab, Id);
+            System.out.println("Changed Info LINK_" + (Id));
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("Failed onExecute by LINK_" + Id);
+        }
+
+    }
+    public void editInfoLink_Grp(int id, String pGrp_Linktext, Double pIcon_Id, Double pTile_Id, Double pSort, String pDescription) {
+        try {
+            onExecute("UPDATE LINK_GRP SET GRP_LINKTEXT =?, ICON_ID =?, TILE_ID =?, SORT =?, DESCRIPTION =? WHERE ID =?", pGrp_Linktext, pIcon_Id, pTile_Id, pSort, pDescription, id);
+            System.out.println("Changed Info Link group:" + id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("Failed onExecute by Link group:" + id);
+        }
+    }
+    public void editInfoLink_Tile(int id, String pName, String pDescription, Double pSort, String pTile_Column_Id) {
+        try {
+            onExecute("UPDATE LINK_TILE SET NAME =?, DESCRIPTION =?, SORT =?, TILE_COLUMN_ID =? WHERE ID =?", pName, pDescription, pSort, pTile_Column_Id, id);
+            System.out.println("Changed Info Link Tile:" + id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("Failed onExecute by Link Tile:" + id);
+        }
+    }
     public void deleteInfoLDAP(int id)  {
         try {
             onExecute("DELETE FROM LDAP_GRP WHERE ID =?", id);
@@ -130,6 +159,18 @@ public class DatabaseUtils extends SQLUtils {
     public void deleteInfoLink_Grp(int id)  {
         try {
             onExecute("DELETE FROM LINK_GRP WHERE ID =?", id);
+            System.out.println("Deleted ROW_" + (id));
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("Failed to delete ROW_ " + (id));
+        }
+
+
+    }
+    public void deleteInfoLink_Tile(int id)  {
+        try {
+            onExecute("DELETE FROM LINK_TILE WHERE ID =?", id);
             System.out.println("Deleted ROW_" + (id));
 
         } catch (SQLException e) {
@@ -191,6 +232,19 @@ public class DatabaseUtils extends SQLUtils {
             rs.next();
             int newId = rs.getInt("MAX(ID)") + 1;
             onExecute("INSERT INTO LINK_GRP VALUES(?,?,?,?,?,?)", newId, pGrp_Linktext, pIcon_Id, pTile_Id, pSort, pDescription);
+            System.out.println("Die ID: " + newId + " wurde zum verzeichnis Hinzugefügt.");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public void addNewIdAndName_Link_Tile(String pName, String pDescription, Double pSort, String pTile_Column_Id) {
+        try
+        {
+            ResultSet rs = onQuery("SELECT MAX(ID) FROM LINK_TILE ORDER BY ID");
+            rs.next();
+            int newId = rs.getInt("MAX(ID)") + 1;
+            onExecute("INSERT INTO LINK_TILE VALUES(?,?,?,?,?)", newId, pName, pDescription, pSort, pTile_Column_Id);
             System.out.println("Die ID: " + newId + " wurde zum verzeichnis Hinzugefügt.");
         }
         catch (Exception e) {
@@ -283,47 +337,6 @@ public class DatabaseUtils extends SQLUtils {
         }
         return list;
     }
-    public void editInfoLink(int Id, String Linktext, Double Link_group_ID, Double Sort, String Description, String Url_Active, Double Url_inActive, Double Active, Double Auth_Level, Double NewTab) {
-
-        try {
-            onExecute("UPDATE LINK SET LINKTEXT =?,LINK_GRP_ID =?,SORT =?,DESCRIPTION =?,URL_ACTIVE =?,URL_INACTIVE =?,ACTIVE =?,AUTH_LEVEL =?,NEWTAB =? WHERE ID =?",Linktext, Link_group_ID, Sort, Description, Url_Active, Url_inActive, Active, Auth_Level, NewTab, Id);
-            System.out.println("Changed Info LINK_" + (Id));
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println("Failed onExecute by LINK_" + Id);
-        }
-
-    }
-    public void editInfoLink_Grp(int id, String pGrp_Linktext, Double pIcon_Id, Double pTile_Id, Double pSort, String pDescription) {
-        try {
-            onExecute("UPDATE LINK_GRP SET GRP_LINKTEXT =?, ICON_ID =?, TILE_ID =?, SORT =?, DESCRIPTION =? WHERE ID =?", pGrp_Linktext, pIcon_Id, pTile_Id, pSort, pDescription, id);
-            System.out.println("Changed Info Link group:" + id);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println("Failed onExecute by Link group:" + id);
-        }
-    }
-    public void editInfoLink_Tile(int id, String pName, String pDescription, Double pSort, Double pTile_Column_Id) {
-        try {
-            onExecute("UPDATE LINK_TILE SET NAME =?, DESCRIPTION =?, SORT =?, TILE_COLUMN_ID =? WHERE ID =?", pName, pDescription, pSort, pTile_Column_Id, id);
-            System.out.println("Changed Info Link Tile:" + id);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println("Failed onExecute by Link Tile:" + id);
-        }
-    }
-    public void deleteInfoLink_Tile(int id)  {
-        try {
-            onExecute("DELETE FROM LINK_TILE WHERE ID =?", id);
-            System.out.println("Deleted ROW_" + (id));
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println("Failed to delete ROW_ " + (id));
-        }
-
-
-    }
     public List<Link_Tile> getInfo_Link_Tile() {
         ResultSet rs;
         List<Link_Tile> list = new ArrayList<>();
@@ -342,18 +355,5 @@ public class DatabaseUtils extends SQLUtils {
             e.printStackTrace();
         }
         return list;
-    }
-    public void addNewIdAndName_Link_Tile(String pName, String pDescription, Double pSort, Double pTile_Column_Id) {
-        try
-        {
-            ResultSet rs = onQuery("SELECT MAX(ID) FROM LINK_TILE ORDER BY ID");
-            rs.next();
-            int newId = rs.getInt("MAX(ID)") + 1;
-            onExecute("INSERT INTO LINK_TILE VALUES(?,?,?,?,?)", newId, pName, pDescription, pSort, pTile_Column_Id);
-            System.out.println("Die ID: " + newId + " wurde zum verzeichnis Hinzugefügt.");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }
