@@ -4,10 +4,12 @@ import com.example.webproject.Listen.*;
 import org.ini4j.Wini;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.sql.Blob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 public class DatabaseUtils extends SQLUtils {
@@ -362,10 +364,19 @@ public class DatabaseUtils extends SQLUtils {
         ResultSet rs;
         List<dbIcon> list = new ArrayList<>();
         try {
-            rs = onQuery("SELECT ICON FROM ICON ORDER BY ID");
+            rs = onQuery("select ID, UTL_RAW.CAST_TO_VARCHAR2(DBMS_LOB.SUBSTR(ICON)), CONTENTTYPE FROM ICON ORDER BY ID");
             while (rs.next()) {
-                Blob icon = rs.getBlob("ICON");
-                list.add(new dbIcon(icon));
+                byte[] bytes = rs.getString("UTL_RAW.CAST_TO_VARCHAR2(DBMS_LOB.SUBSTR(ICON))").getBytes(StandardCharsets.UTF_8);
+                String encoded = Base64.getEncoder().encodeToString(bytes);
+                byte[] decoded = Base64.getDecoder().decode(encoded);
+                String decodedStr = new String(decoded, StandardCharsets.UTF_8);
+
+                System.out.println(decodedStr);
+                list.add(new dbIcon(
+                        rs.getString("ID"),
+                        rs.getString("UTL_RAW.CAST_TO_VARCHAR2(DBMS_LOB.SUBSTR(ICON))"),
+                        rs.getString("CONTENTTYPE")
+                ));
 
             }
         }

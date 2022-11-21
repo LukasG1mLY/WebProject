@@ -22,12 +22,10 @@ import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.renderer.TemplateRenderer;
 import com.vaadin.flow.router.Route;
 
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
-import java.util.Base64;
 import java.util.List;
 
 @Route("")
@@ -760,11 +758,14 @@ public class Main extends Div {
             List<dbIcon> dbIcon = databaseUtils.getInfo_Icon();
             Grid<dbIcon> Icon_grid = new Grid<>();
 
+            Icon_grid.addColumn(com.example.webproject.Listen.dbIcon::getId).setHeader("Id");
             Icon_grid.addColumn(com.example.webproject.Listen.dbIcon::getIcon).setHeader("Icon");
-
+            Icon_grid.addColumn(com.example.webproject.Listen.dbIcon::getContentType).setHeader("Content");
+            Icon_grid.addThemeVariants(GridVariant.LUMO_WRAP_CELL_CONTENT);
+            Icon_grid.setAllRowsVisible(true);
             Icon_grid.setItems(dbIcon);
-            layout_content.add(Icon_grid);
 
+            layout_content.add(Icon_grid);
         }
         add(layout_content, layout_dialog);
     }
