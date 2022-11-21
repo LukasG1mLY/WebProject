@@ -3,7 +3,6 @@ package com.example.webproject;
 import com.example.webproject.DatabaseUtils.DatabaseUtils;
 import com.example.webproject.Listen.*;
 import com.vaadin.flow.component.Unit;
-import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.contextmenu.MenuItem;
@@ -11,7 +10,6 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.*;
-import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.menubar.MenuBar;
 import com.vaadin.flow.component.menubar.MenuBarVariant;
@@ -24,8 +22,8 @@ import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.renderer.TemplateRenderer;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.server.StreamResource;
 
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
@@ -39,7 +37,6 @@ public class Main extends Div {
     private final VerticalLayout layout_dialog;
     private final Tab edit;
     private final Tab home;
-
     public Main() throws IOException {
         databaseUtils = new DatabaseUtils();
         layout_content = new VerticalLayout();
@@ -760,13 +757,19 @@ public class Main extends Div {
             layout_content.add(menuBar);
         }
         if (tab.equals(home)) {
-            H2 Title = new H2("Startseite WebClient");
+            List<dbIcon> dbIcon = databaseUtils.getInfo_Icon();
+            Grid<dbIcon> Icon_grid = new Grid<>();
 
-            layout_content.add(Title);
+            Icon_grid.addColumn(com.example.webproject.Listen.dbIcon::getIcon).setHeader("Icon");
+
+            Icon_grid.setItems(dbIcon);
+            layout_content.add(Icon_grid);
+
         }
         add(layout_content, layout_dialog);
     }
 }
+
 
 //Copyright LukasG1mLY
 

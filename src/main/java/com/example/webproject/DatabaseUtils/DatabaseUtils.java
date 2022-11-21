@@ -4,6 +4,7 @@ import com.example.webproject.Listen.*;
 import org.ini4j.Wini;
 
 import java.io.*;
+import java.sql.Blob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -349,6 +350,23 @@ public class DatabaseUtils extends SQLUtils {
                         rs.getString("DESCRIPTION"),
                         rs.getString("SORT"),
                         rs.getString("TILE_COLUMN_ID")));
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public List<dbIcon> getInfo_Icon() {
+        ResultSet rs;
+        List<dbIcon> list = new ArrayList<>();
+        try {
+            rs = onQuery("SELECT ICON FROM ICON ORDER BY ID");
+            while (rs.next()) {
+                Blob icon = rs.getBlob("ICON");
+                list.add(new dbIcon(icon));
+
             }
         }
         catch (Exception e) {
