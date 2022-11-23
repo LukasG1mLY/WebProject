@@ -23,10 +23,10 @@ import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
-
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.List;
+
 
 @Route("")
 public class Main extends Div {
@@ -70,6 +70,7 @@ public class Main extends Div {
             MenuItem Ldap_Role_item = menuBar.addItem("Ldap Role");
             MenuItem Link_Grp_item = menuBar.addItem("Link Group");
             MenuItem Link_Tile_item = menuBar.addItem("Link Tile");
+            MenuItem Icon_item = menuBar.addItem("Icon");
 
             Infobox_item.addClickListener(e -> {
                 List<InfoBox> InfoBox = databaseUtils.getInfo_InfoBox();
@@ -187,8 +188,8 @@ public class Main extends Div {
                 });
                 createButton.addClickListener(Click -> {editDialog.open();
                     saveButton.addClickListener(click -> {if (tf1.isEmpty()) {
-                            tf1.setValue("N/A");
-                        }
+                        tf1.setValue("N/A");
+                    }
 
                         databaseUtils.addNewIdAndName_Ldap(tf1.getValue());
                         Ldap_grid.getDataProvider().refreshAll();
@@ -459,7 +460,7 @@ public class Main extends Div {
                 });
                 createButton.addClickListener(Click -> {editDialog.open();
                     sb1.addClickListener(click -> {if (tf1.isEmpty()) {tf1.setValue("N/A");
-                        }
+                    }
                         databaseUtils.addNewIdAndName_ROLE(tf1.getValue());
                         gridDialog.close();deleteDialog.close();editDialog.close();
                         Notification.show("Erfolgreich Gespeichert",5000, Notification.Position.TOP_CENTER).addThemeVariants(NotificationVariant.LUMO_SUCCESS, NotificationVariant.LUMO_PRIMARY);
@@ -751,21 +752,41 @@ public class Main extends Div {
                 });
                 gridDialog.add(heading, tools, LinkTile_grid);
             });
+            Icon_item.addClickListener(e -> {
+                for (int i = 1; i < 17; i++) {
+                    databaseUtils.getInfoIcon(i);
+                }
+                Grid<dbIcon> Icon_grid = new Grid<>();
+                List<dbIcon> dbIcon = databaseUtils.getIconImage();
+                H2 H2 = new H2("Verzeichnis-Liste: Link Tile");H2.getStyle().set("margin", "0 auto 0 0");
+                Button cancelButton = new Button("Nein, Abbrechen");cancelButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+                Button closeButton = new Button(VaadinIcon.CLOSE.create());closeButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY, ButtonVariant.LUMO_ERROR);
+                Button maximizeButton = new Button(VaadinIcon.VIEWPORT.create());maximizeButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);maximizeButton.addClickListener(Click -> Icon_grid.setAllRowsVisible(true));
+                Button minimizeButton = new Button(VaadinIcon.RESIZE_H.create());minimizeButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);minimizeButton.addClickListener(Click -> Icon_grid.setAllRowsVisible(false));
+                NumberField tf3 = new NumberField("Sort");tf3.setWidthFull();
+                HorizontalLayout heading = new HorizontalLayout(H2, minimizeButton, maximizeButton, closeButton);heading.setAlignItems(FlexComponent.Alignment.CENTER);
+                Dialog gridDialog = new Dialog();gridDialog.open();gridDialog.setCloseOnOutsideClick(false);gridDialog.setWidthFull();gridDialog.getFooter().add();
+                Dialog deleteDialog = new Dialog();deleteDialog.setHeaderTitle("Verzeichnis Löschen ?");deleteDialog.setCloseOnOutsideClick(false);deleteDialog.add("Dieser Vorgang kann nicht Rückgänig gemacht werden !");deleteDialog.getFooter().add(cancelButton);deleteDialog.setWidth(60, Unit.PERCENTAGE);
+                Icon_grid.addThemeVariants(GridVariant.LUMO_WRAP_CELL_CONTENT, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COLUMN_BORDERS);
+                Icon_grid.addColumn(com.example.webproject.Listen.dbIcon::getId).setHeader("Id");
+                Icon_grid.addComponentColumn(i -> new Image());
+                Icon_grid.addColumn(com.example.webproject.Listen.dbIcon::getContentType).setHeader("Contenttype");
+                Icon_grid.setItems(dbIcon);
+                cancelButton.addClickListener(Click -> {
+                    deleteDialog.close();
+                });
+                closeButton.addClickListener(Click -> {
+                    gridDialog.close();
+                    deleteDialog.close();
+
+                });
+                gridDialog.add(heading, Icon_grid);
+            });
 
             layout_content.add(menuBar);
         }
         if (tab.equals(home)) {
-            List<dbIcon> dbIcon = databaseUtils.getInfo_Icon();
-            Grid<dbIcon> Icon_grid = new Grid<>();
-
-            Icon_grid.addColumn(com.example.webproject.Listen.dbIcon::getId).setHeader("Id");
-            Icon_grid.addColumn(com.example.webproject.Listen.dbIcon::getIcon).setHeader("Icon");
-            Icon_grid.addColumn(com.example.webproject.Listen.dbIcon::getContentType).setHeader("Content");
-            Icon_grid.addThemeVariants(GridVariant.LUMO_WRAP_CELL_CONTENT);
-            Icon_grid.setAllRowsVisible(true);
-            Icon_grid.setItems(dbIcon);
-
-            layout_content.add(Icon_grid);
+            System.out.println("");
         }
         add(layout_content, layout_dialog);
     }

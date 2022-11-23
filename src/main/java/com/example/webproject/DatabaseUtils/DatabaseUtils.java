@@ -3,13 +3,16 @@ package com.example.webproject.DatabaseUtils;
 import com.example.webproject.Listen.*;
 import org.ini4j.Wini;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Blob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 
 public class DatabaseUtils extends SQLUtils {
@@ -359,30 +362,70 @@ public class DatabaseUtils extends SQLUtils {
         }
         return list;
     }
-
-    public List<dbIcon> getInfo_Icon() {
+    public void getInfoIcon(int i) {
         ResultSet rs;
-        List<dbIcon> list = new ArrayList<>();
         try {
-            rs = onQuery("select ID, UTL_RAW.CAST_TO_VARCHAR2(DBMS_LOB.SUBSTR(ICON)), CONTENTTYPE FROM ICON ORDER BY ID");
+            rs = onQuery("SELECT ICON FROM ICON WHERE ID =?", i);
             while (rs.next()) {
-                byte[] bytes = rs.getString("UTL_RAW.CAST_TO_VARCHAR2(DBMS_LOB.SUBSTR(ICON))").getBytes(StandardCharsets.UTF_8);
-                String encoded = Base64.getEncoder().encodeToString(bytes);
-                byte[] decoded = Base64.getDecoder().decode(encoded);
-                String decodedStr = new String(decoded, StandardCharsets.UTF_8);
+                Blob aBlob = rs.getBlob("ICON");
+                InputStream is = aBlob.getBinaryStream(1, aBlob.length());
+                BufferedImage bufferedImage = ImageIO.read(is);
+                File outputfile = File.createTempFile("saved.png", ".png");
+                ImageIO.write(bufferedImage, "png", outputfile); // Write the Buffered Image into an output file
+                ImageIO.read(outputfile); // Opening again as an Image
 
-                System.out.println(decodedStr);
-                list.add(new dbIcon(
-                        rs.getString("ID"),
-                        rs.getString("UTL_RAW.CAST_TO_VARCHAR2(DBMS_LOB.SUBSTR(ICON))"),
-                        rs.getString("CONTENTTYPE")
-                ));
+                String url = "/Temp/"+outputfile.getName();
+                String rename = String.valueOf(outputfile.createNewFile());
+                System.out.println(url);
 
+                try {
+                    onExecute("UPDATE ICON SET URL =? WHERE ID =?", url, i);
+                }
+                catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
         }
         catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    public List<dbIcon> getIconImage() {
+        ResultSet rs;
+        List<dbIcon> list = new ArrayList<>();
+        try {
+            rs = onQuery("SELECT ID,CONTENTTYPE FROM ICON ORDER BY ID");
+            while (rs.next()) {
+                list.add(new dbIcon(
+                        rs.getString("ID"),
+                        rs.getString("CONTENTTYPE")));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return list;
     }
+    public String getLinkImage() {
+
+        ResultSet rs;
+
+        try {
+            rs = onQuery("SELECT URL FROM ICON ORDER BY ID");
+            rs.next();
+            return rs.getString("URL");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("Failed onQuery");
+            return "";
+        }
+    }
+
+    public String deleteIcons() {
+
+
+
+        return null;
+    }
+
 }
