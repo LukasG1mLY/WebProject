@@ -370,20 +370,10 @@ public class DatabaseUtils extends SQLUtils {
                 Blob aBlob = rs.getBlob("ICON");
                 InputStream is = aBlob.getBinaryStream(1, aBlob.length());
                 BufferedImage bufferedImage = ImageIO.read(is);
-                File outputfile = File.createTempFile("saved.png", ".png");
-                ImageIO.write(bufferedImage, "png", outputfile); // Write the Buffered Image into an output file
-                ImageIO.read(outputfile); // Opening again as an Image
-
-                String url = "/Temp/"+outputfile.getName();
-                String rename = String.valueOf(outputfile.createNewFile());
-                System.out.println(url);
-
-                try {
-                    onExecute("UPDATE ICON SET URL =? WHERE ID =?", url, i);
-                }
-                catch (SQLException e) {
-                    e.printStackTrace();
-                }
+                File outputfile = new File("src/main/resources/images","Icon"+i+".png");
+                System.out.println(outputfile.getName());;
+                ImageIO.write(bufferedImage, "png", outputfile);
+                onExecute("UPDATE ICON SET URL =? WHERE ID =?", outputfile.getPath(), i);
             }
         }
         catch (Exception e) {
@@ -420,7 +410,6 @@ public class DatabaseUtils extends SQLUtils {
             return "";
         }
     }
-
     public String deleteIcons() {
 
 

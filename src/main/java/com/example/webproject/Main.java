@@ -754,7 +754,7 @@ public class Main extends Div {
             });
             Icon_item.addClickListener(e -> {
                 for (int i = 1; i < 17; i++) {
-                    databaseUtils.getInfoIcon(i);
+                    databaseUtils.createIconFiles(i);
                 }
                 Grid<dbIcon> Icon_grid = new Grid<>();
                 List<dbIcon> dbIcon = databaseUtils.getIconImage();
@@ -769,12 +769,31 @@ public class Main extends Div {
                 Dialog deleteDialog = new Dialog();deleteDialog.setHeaderTitle("Verzeichnis Löschen ?");deleteDialog.setCloseOnOutsideClick(false);deleteDialog.add("Dieser Vorgang kann nicht Rückgänig gemacht werden !");deleteDialog.getFooter().add(cancelButton);deleteDialog.setWidth(60, Unit.PERCENTAGE);
                 Icon_grid.addThemeVariants(GridVariant.LUMO_WRAP_CELL_CONTENT, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COLUMN_BORDERS);
                 Icon_grid.addColumn(com.example.webproject.Listen.dbIcon::getId).setHeader("Id");
-                Icon_grid.addComponentColumn(i -> new Image());
+                Icon_grid.addComponentColumn(i-> {
+
+                    Image icon1 = new Image("images/Icon1", "images/Icon1");
+                    Image icon2 = new Image("src/main/java/com/example/webproject/Icons/Icon2.png", "Icon2");
+                    Image icon3 = new Image("src/main/java/com/example/webproject/Icons/Icon3.png", "Icon3");
+                    Image icon4 = new Image("src/main/java/com/example/webproject/Icons/Icon4.png", "Icon4");
+                    Image icon5 = new Image("src/main/java/com/example/webproject/Icons/Icon5.png", "Icon5");
+                    Image icon6 = new Image("src/main/java/com/example/webproject/Icons/Icon6.png", "Icon6");
+                    Image icon7 = new Image("src/main/java/com/example/webproject/Icons/Icon7.png", "Icon7");
+                    Image icon8 = new Image("src/main/java/com/example/webproject/Icons/Icon8.png", "Icon8");
+                    Image icon9 = new Image("src/main/java/com/example/webproject/Icons/Icon9.png", "Icon9");
+                    Image icon10 = new Image("src/main/java/com/example/webproject/Icons/Icon10.png", "Icon10");
+                    Image icon11 = new Image("src/main/java/com/example/webproject/Icons/Icon11.png", "Icon11");
+                    Image icon12 = new Image("src/main/java/com/example/webproject/Icons/Icon12.png", "Icon12");
+                    Image icon13 = new Image("src/main/java/com/example/webproject/Icons/Icon13.png", "Icon13");
+                    Image icon14 = new Image("src/main/java/com/example/webproject/Icons/Icon14.png", "Icon14");
+                    Image icon15 = new Image("src/main/java/com/example/webproject/Icons/Icon15.png", "Icon15");
+                    Image icon16 = new Image("src/main/java/com/example/webproject/Icons/Icon16.png", "Icon16");
+
+
+                    return icon1;
+                });
                 Icon_grid.addColumn(com.example.webproject.Listen.dbIcon::getContentType).setHeader("Contenttype");
                 Icon_grid.setItems(dbIcon);
-                cancelButton.addClickListener(Click -> {
-                    deleteDialog.close();
-                });
+                cancelButton.addClickListener(Click -> deleteDialog.close());
                 closeButton.addClickListener(Click -> {
                     gridDialog.close();
                     deleteDialog.close();
@@ -787,6 +806,9 @@ public class Main extends Div {
         }
         if (tab.equals(home)) {
             System.out.println("");
+            Image image = new Image("src/main/resources/META-INF.resources.images/image1.png", "saved2.png");
+            image.setVisible(true);
+            add(image);
         }
         add(layout_content, layout_dialog);
     }
